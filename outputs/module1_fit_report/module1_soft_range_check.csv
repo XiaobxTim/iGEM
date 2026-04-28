@@ -1,0 +1,5 @@
+parameter,value,soft_low,soft_high,in_soft_range
+k_lymph,0.005068806826139147,0.001,0.3,True
+k_blood,0.022942049427962866,0.001,0.3,True
+k_deg_loc,0.09423101634847518,0.0001,0.01,False
+k_lymph_to_blood,0.4690962434716974,0.01,0.3,False

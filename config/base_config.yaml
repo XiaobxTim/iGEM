@@ -1,0 +1,73 @@
+route: footpad
+
+simulation:
+  default_t_end: 72.0
+  default_dt: 0.1
+  solver: LSODA
+
+absorption:
+  footpad:
+    k_lymph: 0.08
+    k_blood: 0.03
+    k_deg_loc: 0.005
+    k_lymph_to_blood: 0.12
+
+distribution:
+  k_blood_to_liver: 0.08
+  k_blood_to_peripheral: 0.05
+  k_blood_to_brain: 0.01
+
+  k_liver_to_blood: 0.01
+  k_peripheral_to_blood: 0.02
+  k_brain_to_blood: 0.0
+
+  k_clear_blood: 0.01
+  k_clear_liver: 0.02
+  k_clear_peripheral: 0.01
+  k_clear_brainblood: 0.001
+
+bbb:
+  k_brainblood_to_EC: 0.02
+  k_EC_to_endo: 0.05
+  k_EC_to_brainblood: 0.01
+
+  k_endo_to_ISF: 0.01
+  k_endo_to_brainblood: 0.005
+  k_endo_loss: 0.01
+
+  k_clear_ISF: 0.001
+
+intracellular:
+  k_ISF_to_cell: 0.03
+  k_cell_to_nuc: 0.02
+  k_cell_loss: 0.005
+
+  k_deg_v: 0.003
+  k_tx: 0.4
+  k_deg_m: 0.08
+  k_tl: 0.9
+  k_deg_p: 0.03
+
+editing:
+  k_cat_on: 0.5
+  K_d_on: 0.2
+  k_cat_off: 0.05
+  K_d_off: 1.0
+  k_loss_on: 0.0
+  k_loss_off: 0.0
+
+  S_on_init: 1.0
+  S_off_init: 5.0
+  specificity_eps: 1.0e-12
+
+optimization:
+  E_on_target_threshold: 0.2
+  E_off_max: 0.05
+  SI_min: 5.0
+  AUC_liver_max: 5.0
+  Cmax_blood_max: 1.0
+
+  dose_scan:
+    dose_min: 0.1
+    dose_max: 10.0
+    n_doses: 12
