@@ -1,0 +1,2 @@
+[console_scripts]
+pufscan = pufscan.cli:app

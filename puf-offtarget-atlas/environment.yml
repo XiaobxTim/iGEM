@@ -1,0 +1,11 @@
+name: puf-offtarget-atlas
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.12
+  - pip
+  - viennarna
+  - pip:
+      - -e .[dev]
+

@@ -1,0 +1,32 @@
+##description: synthetic test annotation; not biological data
+chr1	test	gene	101	220	.	+	.	gene_id "ENSG000001.5"; gene_name "GENE1"; gene_type "protein_coding";
+chr1	test	transcript	101	215	.	+	.	gene_id "ENSG000001.5"; transcript_id "ENST000001.1"; gene_name "GENE1"; gene_type "protein_coding"; transcript_name "GENE1-201"; transcript_type "protein_coding"; tag "basic"; tag "MANE_Select";
+chr1	test	exon	101	115	.	+	.	gene_id "ENSG000001.5"; transcript_id "ENST000001.1"; gene_name "GENE1"; gene_type "protein_coding"; transcript_name "GENE1-201"; transcript_type "protein_coding"; exon_number "1"; exon_id "ENSE000001.1"; tag "basic";
+chr1	test	CDS	106	115	.	+	0	gene_id "ENSG000001.5"; transcript_id "ENST000001.1"; gene_name "GENE1"; gene_type "protein_coding"; transcript_type "protein_coding"; exon_number "1";
+chr1	test	start_codon	106	108	.	+	0	gene_id "ENSG000001.5"; transcript_id "ENST000001.1";
+chr1	test	exon	201	215	.	+	.	gene_id "ENSG000001.5"; transcript_id "ENST000001.1"; gene_name "GENE1"; gene_type "protein_coding"; transcript_name "GENE1-201"; transcript_type "protein_coding"; exon_number "2"; exon_id "ENSE000002.1"; tag "basic";
+chr1	test	CDS	201	210	.	+	2	gene_id "ENSG000001.5"; transcript_id "ENST000001.1"; gene_name "GENE1"; gene_type "protein_coding"; transcript_type "protein_coding"; exon_number "2";
+chr1	test	stop_codon	208	210	.	+	0	gene_id "ENSG000001.5"; transcript_id "ENST000001.1";
+chr1	test	transcript	101	220	.	+	.	gene_id "ENSG000001.5"; transcript_id "ENST000003.2"; gene_name "GENE1"; gene_type "protein_coding"; transcript_name "GENE1-202"; transcript_type "protein_coding"; tag "appris_principal_1";
+chr1	test	exon	101	115	.	+	.	gene_id "ENSG000001.5"; transcript_id "ENST000003.2"; gene_name "GENE1"; gene_type "protein_coding"; transcript_name "GENE1-202"; transcript_type "protein_coding"; exon_number "1"; exon_id "ENSE000001.1";
+chr1	test	exon	201	220	.	+	.	gene_id "ENSG000001.5"; transcript_id "ENST000003.2"; gene_name "GENE1"; gene_type "protein_coding"; transcript_name "GENE1-202"; transcript_type "protein_coding"; exon_number "2"; exon_id "ENSE000003.1";
+chr2	test	gene	301	415	.	-	.	gene_id "ENSG000002.1"; gene_name "GENE2"; gene_type "protein_coding";
+chr2	test	transcript	301	415	.	-	.	gene_id "ENSG000002.1"; transcript_id "ENST000002.1"; gene_name "GENE2"; gene_type "protein_coding"; transcript_name "GENE2-201"; transcript_type "protein_coding"; tag "basic";
+chr2	test	exon	401	415	.	-	.	gene_id "ENSG000002.1"; transcript_id "ENST000002.1"; gene_name "GENE2"; gene_type "protein_coding"; transcript_name "GENE2-201"; transcript_type "protein_coding"; exon_number "1"; exon_id "ENSE000004.1";
+chr2	test	CDS	401	415	.	-	0	gene_id "ENSG000002.1"; transcript_id "ENST000002.1"; gene_name "GENE2"; gene_type "protein_coding"; transcript_type "protein_coding"; exon_number "1";
+chr2	test	start_codon	413	415	.	-	0	gene_id "ENSG000002.1"; transcript_id "ENST000002.1";
+chr2	test	exon	301	315	.	-	.	gene_id "ENSG000002.1"; transcript_id "ENST000002.1"; gene_name "GENE2"; gene_type "protein_coding"; transcript_name "GENE2-201"; transcript_type "protein_coding"; exon_number "2"; exon_id "ENSE000005.1";
+chr2	test	CDS	301	315	.	-	0	gene_id "ENSG000002.1"; transcript_id "ENST000002.1"; gene_name "GENE2"; gene_type "protein_coding"; transcript_type "protein_coding"; exon_number "2";
+chr2	test	stop_codon	301	303	.	-	0	gene_id "ENSG000002.1"; transcript_id "ENST000002.1";
+chr3	test	gene	101	140	.	+	.	gene_id "ENSG000004.1"; gene_name "GENE4"; gene_type "protein_coding";
+chr3	test	transcript	101	140	.	+	.	gene_id "ENSG000004.1"; transcript_id "ENST000004.1"; gene_name "GENE4"; gene_type "protein_coding"; transcript_name "GENE4-201"; transcript_type "protein_coding"; tag "basic";
+chr3	test	exon	101	140	.	+	.	gene_id "ENSG000004.1"; transcript_id "ENST000004.1"; gene_name "GENE4"; gene_type "protein_coding"; transcript_name "GENE4-201"; transcript_type "protein_coding"; exon_number "1"; exon_id "ENSE000006.1";
+chr3	test	UTR	101	110	.	+	.	gene_id "ENSG000004.1"; transcript_id "ENST000004.1";
+chr3	test	CDS	111	130	.	+	0	gene_id "ENSG000004.1"; transcript_id "ENST000004.1"; exon_number "1";
+chr3	test	start_codon	111	113	.	+	0	gene_id "ENSG000004.1"; transcript_id "ENST000004.1";
+chr3	test	stop_codon	128	130	.	+	0	gene_id "ENSG000004.1"; transcript_id "ENST000004.1";
+chr3	test	UTR	131	140	.	+	.	gene_id "ENSG000004.1"; transcript_id "ENST000004.1";
+chr4	test	gene	501	530	.	+	.	gene_id "ENSG000005.1"; gene_name "GENE5"; gene_type "lncRNA";
+chr4	test	transcript	501	530	.	+	.	gene_id "ENSG000005.1"; transcript_id "ENST000005.1"; gene_name "GENE5"; gene_type "lncRNA"; transcript_name "GENE5-201"; transcript_type "lncRNA";
+chr4	test	exon	501	530	.	+	.	gene_id "ENSG000005.1"; transcript_id "ENST000005.1"; gene_name "GENE5"; gene_type "lncRNA"; transcript_name "GENE5-201"; transcript_type "lncRNA"; exon_number "1"; exon_id "ENSE000007.1";
+

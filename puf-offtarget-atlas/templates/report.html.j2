@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PUF-OffTarget Atlas report</title>
+  <script>{{ plotly_js|safe }}</script>
+  <style>
+    :root { --ink:#172126; --muted:#5c6970; --line:#d9e0e3; --accent:#087f8c; --alert:#d94841; }
+    body { margin:0; color:var(--ink); background:#f6f8f8; font:14px/1.45 Georgia, serif; letter-spacing:0; }
+    header, main { max-width:1180px; margin:auto; padding:24px; }
+    header { border-bottom:3px solid var(--accent); background:white; }
+    h1,h2 { font-family:"Helvetica Neue",sans-serif; letter-spacing:0; }
+    .metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1px; background:var(--line); }
+    .metric { background:white; padding:14px; }
+    .metric strong { display:block; font:24px "Helvetica Neue",sans-serif; }
+    section { padding:22px 0; border-bottom:1px solid var(--line); }
+    .plots { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    table { width:100%; border-collapse:collapse; background:white; font-size:12px; }
+    th,td { padding:8px; border:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { background:#e8f1f2; font-family:"Helvetica Neue",sans-serif; }
+    .notice { border-left:4px solid var(--alert); padding-left:14px; }
+    @media(max-width:760px){ .plots{grid-template-columns:1fr} header,main{padding:16px} }
+  </style>
+</head>
+<body>
+<header><h1>PUF-OffTarget Atlas</h1><p>Potential transcriptome binding candidates · heuristic prioritization only</p></header>
+<main>
+  <section><h2>Run summary</h2><div class="metrics">
+    {% for key,value in summary.items() %}<div class="metric"><span>{{ key }}</span><strong>{{ value }}</strong></div>{% endfor %}
+  </div></section>
+  <section class="plots"><div><h2>Mismatch distribution</h2>{{ mismatch_plot|safe }}</div><div><h2>Risk score distribution</h2>{{ risk_plot|safe }}</div></section>
+  <section><h2>Transcript region schematic</h2>{{ schematic|safe }}</section>
+  <section><h2>Tissue expression heatmap</h2>{{ tissue_heatmap|safe }}</section>
+  <section><h2>RNA accessibility</h2>{{ accessibility_plot|safe }}</section>
+  <section><h2>Top candidates</h2><div style="overflow:auto"><table><thead><tr><th>Gene</th><th>Transcript</th><th>Matched motif</th><th>Mismatch</th><th>Region</th><th>Expression</th><th>Accessibility</th><th>Potential consequence</th><th>Risk score</th></tr></thead><tbody>
+  {% for hit in top_hits %}<tr><td>{{ hit.gene_name }}</td><td>{{ hit.transcript_id }}</td><td>{{ hit.matched_sequence_rna }}</td><td>{{ hit.mismatch_count }}</td><td>{{ hit.transcript_region }}</td><td>{{ hit.target_tissue_tpm }}</td><td>{{ hit.accessibility_score }}</td><td>{{ hit.consequence_summary }}</td><td>{{ "%.2f"|format(hit.risk_score) }}</td></tr>{% endfor %}
+  </tbody></table></div></section>
+  <section class="notice"><h2>Evidence and limitations</h2>{% for item in limitations %}<p>{{ item }}</p>{% endfor %}</section>
+</main></body></html>

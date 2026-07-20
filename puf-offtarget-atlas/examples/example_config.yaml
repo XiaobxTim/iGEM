@@ -1,0 +1,11 @@
+query: AACGUCUAUA
+max_mismatches: 1
+fasta: tests/data/synthetic.fa
+gtf: tests/data/synthetic.gtf
+expression: tests/data/expression.tsv
+target_tissues: [Liver]
+mode: binding_only
+structure:
+  enabled: false
+output_dir: results
+

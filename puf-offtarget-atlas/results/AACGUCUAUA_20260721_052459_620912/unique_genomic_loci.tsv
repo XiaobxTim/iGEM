@@ -1,0 +1,6 @@
+chromosome	strand	genomic_blocks	transcripts	genes	max_risk_score	affects_mane_select	affects_principal
+chr1	+	"[{""chromosome"":""chr1"",""start_1based"":111,""end_1based"":115},{""chromosome"":""chr1"",""start_1based"":201,""end_1based"":205}]"	"[""ENST000001.1"", ""ENST000003.2""]"	"[""GENE1""]"	100.0	True	True
+chr2	-	"[{""chromosome"":""chr2"",""start_1based"":401,""end_1based"":410}]"	"[""ENST000002.1""]"	"[""GENE2""]"	98.25931938526898	False	False
+chr3	+	"[{""chromosome"":""chr3"",""start_1based"":101,""end_1based"":110}]"	"[""ENST000004.1""]"	"[""GENE4""]"	93.07196706532547	False	False
+chr3	+	"[{""chromosome"":""chr3"",""start_1based"":131,""end_1based"":140}]"	"[""ENST000004.1""]"	"[""GENE4""]"	91.83859021684452	False	False
+chr4	+	"[{""chromosome"":""chr4"",""start_1based"":506,""end_1based"":515}]"	"[""ENST000005.1""]"	"[""GENE5""]"	81.60130268992198	False	False
