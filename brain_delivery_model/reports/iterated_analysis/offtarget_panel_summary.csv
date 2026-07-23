@@ -1,0 +1,9 @@
+key,value
+n_sites,4.0
+effective_pool,1.8599999999999999
+relative_binding,0.15139784946236562
+relative_catalysis,0.1086021505376344
+base_S_off_init,5.0
+applied_S_off_init,1.8599999999999999
+applied_k_on_off,0.030279569892473126
+applied_k_cat_off,0.0054301075268817205

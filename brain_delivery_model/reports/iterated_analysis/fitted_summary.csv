@@ -1,0 +1,9 @@
+metric,value
+E_on_final,0.017707233904403097
+E_off_final,2.9085993501501757e-05
+on_target_editing_rate_final,0.017707233904403097
+off_target_burden_final,1.5637630914785893e-05
+specificity_index_final,608.78901367766
+P_brain_peak,0.004221708294472933
+AUC_liver,15.852820699821635
+Cmax_blood,0.23483431399696483
