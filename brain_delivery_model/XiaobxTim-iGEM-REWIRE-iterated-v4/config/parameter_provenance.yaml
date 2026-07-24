@@ -1,0 +1,222 @@
+# Parameter provenance for the iterated iGEM delivery-expression-editing model.
+#
+# Units are the model's normalized amount/hour convention unless stated
+# otherwise. Because the wet-lab system is not calibrated yet, ranges are used
+# as uncertainty priors rather than claims of exact biological constants.
+
+parameters:
+  absorption.footpad.k_lymph:
+    nominal: 0.08
+    low: 0.02
+    high: 0.20
+    distribution: log_uniform
+    confidence: medium
+    rationale: Local depot drainage is route- and formulation-dependent; keep broad until dose-time qPCR data are available.
+    source: Original combined model, to be calibrated with local injection-site and blood qPCR time course.
+
+  absorption.footpad.k_blood:
+    nominal: 0.03
+    low: 0.005
+    high: 0.10
+    distribution: log_uniform
+    confidence: low
+    rationale: Direct vascular entry from local administration is uncertain; broad prior prevents overconfidence.
+    source: Original combined model plus route-dependence assumption.
+
+  distribution.k_blood_to_liver:
+    nominal: 0.08
+    low: 0.02
+    high: 0.30
+    distribution: log_uniform
+    confidence: medium
+    rationale: Liver is a major systemic sink for AAV after systemic exposure; range should be narrowed with liver vector-genome qPCR.
+    source: AAV gene-therapy vector biodistribution literature and AAV tropism summaries.
+
+  distribution.k_blood_to_brain:
+    nominal: 0.01
+    low: 0.001
+    high: 0.05
+    distribution: log_uniform
+    confidence: medium
+    rationale: AAV9-like brain entry is much lower than liver uptake, but nonzero because AAV9 can cross the BBB.
+    source: AAV9 BBB-crossing studies and AAV serotype tropism summaries.
+
+  bbb.k_brainblood_to_EC:
+    nominal: 0.02
+    low: 0.002
+    high: 0.08
+    distribution: log_uniform
+    confidence: low
+    rationale: Captures endothelial association; should be calibrated from brain vascular versus parenchymal vector measurements.
+    source: Mechanistic BBB transcytosis abstraction.
+
+  bbb.k_endo_to_ISF:
+    nominal: 0.01
+    low: 0.001
+    high: 0.04
+    distribution: log_uniform
+    confidence: low
+    rationale: Successful transcytosis is a key uncertainty; use a broad prior and target with brain-delivery assays.
+    source: BBB transcytosis and AAV9 CNS delivery literature.
+
+  intracellular.k_tx:
+    nominal: 0.4
+    low: 0.05
+    high: 1.20
+    distribution: log_uniform
+    confidence: medium
+    rationale: Normalized transcription rate after vector reaches nucleus; calibrate with PUF-APOBEC qPCR.
+    source: Original model, bounded by expected mammalian expression time-course behavior.
+
+  intracellular.k_deg_m:
+    nominal: 0.08
+    low: 0.02
+    high: 0.25
+    distribution: log_uniform
+    confidence: medium
+    rationale: Corresponds to an mRNA half-life of roughly 2.8-35 h; mammalian mRNA half-lives span minutes to days.
+    source: Mammalian mRNA turnover literature.
+
+  intracellular.k_tl:
+    nominal: 0.9
+    low: 0.10
+    high: 2.50
+    distribution: log_uniform
+    confidence: medium
+    rationale: Normalized translation rate; to be calibrated with Western blot or tagged-editor fluorescence.
+    source: Original model, wet-lab calibration needed.
+
+  intracellular.k_deg_p:
+    nominal: 0.03
+    low: 0.005
+    high: 0.10
+    distribution: log_uniform
+    confidence: medium
+    rationale: Protein half-life prior spans about 7-139 h, covering short-lived fused editors and more stable proteins.
+    source: General mammalian protein turnover literature.
+
+  editing.k_on_on:
+    nominal: 1.0
+    low: 0.10
+    high: 10.0
+    distribution: log_uniform
+    confidence: low
+    rationale: Effective binding rate for engineered PUF-target RNA interaction in normalized units; sequence-specific and must be fitted.
+    source: PUF-RNA binding literature; current value is normalized for model-scale exploration.
+
+  editing.k_off_on:
+    nominal: 0.5
+    low: 0.05
+    high: 2.0
+    distribution: log_uniform
+    confidence: low
+    rationale: Effective dissociation rate; should be constrained by EMSA/SPR or editing time-course data.
+    source: PUF-RNA binding literature; current value is normalized for model-scale exploration.
+
+  editing.k_cat_on:
+    nominal: 0.5
+    low: 0.05
+    high: 2.0
+    distribution: log_uniform
+    confidence: low
+    rationale: Effective C-to-U editing turnover; captures APOBEC chemistry plus RNA accessibility.
+    source: APOBEC/RNA-editing literature; fitted wet-lab amplicon editing time course required.
+
+  editing.k_on_off:
+    nominal: 0.2
+    low: 0.01
+    high: 2.0
+    distribution: log_uniform
+    confidence: low
+    rationale: Off-target binding prior is lower than on-target but uncertain; sequence screening should refine this.
+    source: Off-target risk model assumption informed by RNA-binding specificity.
+
+  editing.k_cat_off:
+    nominal: 0.05
+    low: 0.001
+    high: 0.5
+    distribution: log_uniform
+    confidence: low
+    rationale: Off-target catalytic efficiency is expected to be lower but not zero; amplicon/RNA-seq validation should update.
+    source: Off-target editing risk assumption.
+
+  editing.k_on_112:
+    nominal: 1.0
+    low: 0.10
+    high: 10.0
+    distribution: log_uniform
+    confidence: low
+    rationale: Effective PUF binding rate to APOE codon-112 target window, sequence/accessibility-adjusted in v4.
+    source: Han et al. NAR 2022 gkac713 CU-REWIRE design rules; to be calibrated with APOE112 amplicon time course.
+
+  editing.k_cat_112:
+    nominal: 1.0
+    low: 0.03
+    high: 3.0
+    distribution: log_uniform
+    confidence: low
+    rationale: Effective APOE112 C-to-U editing turnover; gkac713 reports strong CU-REWIRE activity in the preferred window/context at 48 h, so v4 uses a higher APOE112 prior before wet-lab fitting.
+    source: Han et al. NAR 2022 gkac713 CU-REWIRE HEK293T editing results.
+
+  editing.k_on_158:
+    nominal: 0.35
+    low: 0.02
+    high: 5.0
+    distribution: log_uniform
+    confidence: low
+    rationale: Effective PUF binding/capture rate for the APOE158 edit window, expected to be lower unless explicitly targeted.
+    source: v4 dual-site editing prior.
+
+  editing.k_cat_158:
+    nominal: 0.15
+    low: 0.005
+    high: 2.0
+    distribution: log_uniform
+    confidence: low
+    rationale: Effective APOE158 turnover is lower by default because the main therapeutic design objective is APOE4-to-APOE3-like editing at codon 112; dual editing remains tracked as APOE2-like risk.
+    source: Han et al. NAR 2022 gkac713 editing-window logic plus APOE therapeutic-objective choice.
+
+  editing.k_on_puf_off:
+    nominal: 0.015
+    low: 0.001
+    high: 0.5
+    distribution: log_uniform
+    confidence: low
+    rationale: Aggregate PUF-mismatch off-target binding rate; lowered for the default 10-repeat PUF prior because gkac713 reports substantially improved transcriptome specificity with expanded PUF recognition.
+    source: Han et al. NAR 2022 gkac713 10R REWIRE specificity results.
+
+  editing.k_cat_puf_off:
+    nominal: 0.006
+    low: 0.0001
+    high: 0.2
+    distribution: log_uniform
+    confidence: low
+    rationale: Aggregate PUF-mediated off-target catalytic rate after mismatch binding; default is reduced for 10R recognition and then rescaled by each design row.
+    source: Han et al. NAR 2022 gkac713 off-target comparison.
+
+  editing.k_deaminase_bg:
+    nominal: 0.0003
+    low: 0.00001
+    high: 0.02
+    distribution: log_uniform
+    confidence: low
+    rationale: Deaminase-only background editing rate independent of correct PUF targeting; active A3A-family constructs keep a nonzero prior, while inactive/PUF-only controls set this pathway to zero.
+    source: Han et al. NAR 2022 gkac713 free-A3A/off-target controls; should be constrained with inactive/PUF-only controls.
+
+  editing.local_bystander_per_112:
+    nominal: 0.04
+    low: 0.001
+    high: 0.2
+    distribution: log_uniform
+    confidence: low
+    rationale: Nearby C-edit burden caused after correct APOE112 targeting; CU-REWIRE has a narrower window than broader deaminase systems but local bystander edits remain possible.
+    source: Han et al. NAR 2022 gkac713 local/windowed editing behavior.
+
+  editing.local_bystander_per_158:
+    nominal: 0.06
+    low: 0.001
+    high: 0.4
+    distribution: log_uniform
+    confidence: low
+    rationale: Nearby C-edit burden around APOE158, tracked separately because the 158 edit changes LDLR-binding interpretation.
+    source: v4 local bystander prior.

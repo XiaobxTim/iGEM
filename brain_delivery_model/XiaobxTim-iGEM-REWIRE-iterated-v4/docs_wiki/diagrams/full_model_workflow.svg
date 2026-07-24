@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+  <title id="title">v4 full model workflow</title>
+  <desc id="desc">A schematic showing the v4 model workflow from delivery input to expression, APOE editing, off-target analysis, and experiment recommendation.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+    <style>
+      .box { fill: #f8fafc; stroke: #334155; stroke-width: 2; rx: 14; }
+      .accent { fill: #e0f2fe; stroke: #0369a1; stroke-width: 2; rx: 14; }
+      .risk { fill: #fef3c7; stroke: #b45309; stroke-width: 2; rx: 14; }
+      .text { font-family: Arial, sans-serif; font-size: 22px; fill: #0f172a; text-anchor: middle; }
+      .small { font-family: Arial, sans-serif; font-size: 16px; fill: #475569; text-anchor: middle; }
+      .line { stroke: #334155; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect x="30" y="90" width="150" height="120" class="box"/>
+  <text x="105" y="140" class="text">Delivery</text>
+  <text x="105" y="170" class="small">dose, route</text>
+
+  <rect x="225" y="90" width="160" height="120" class="box"/>
+  <text x="305" y="132" class="text">Distribution</text>
+  <text x="305" y="162" class="small">blood, liver, brain</text>
+
+  <rect x="430" y="90" width="160" height="120" class="box"/>
+  <text x="510" y="132" class="text">BBB</text>
+  <text x="510" y="162" class="small">transport extension</text>
+
+  <rect x="635" y="90" width="170" height="120" class="accent"/>
+  <text x="720" y="132" class="text">Expression</text>
+  <text x="720" y="162" class="small">mRNA to editor</text>
+
+  <rect x="850" y="60" width="170" height="90" class="accent"/>
+  <text x="935" y="98" class="text">APOE Edit</text>
+  <text x="935" y="126" class="small">112 and 158</text>
+
+  <rect x="850" y="185" width="170" height="90" class="risk"/>
+  <text x="935" y="222" class="text">Off-target</text>
+  <text x="935" y="250" class="small">3 mechanisms</text>
+
+  <rect x="1060" y="115" width="120" height="120" class="box"/>
+  <text x="1120" y="160" class="text">Design</text>
+  <text x="1120" y="188" class="small">recommendation</text>
+
+  <path d="M180 150 H225" class="line"/>
+  <path d="M385 150 H430" class="line"/>
+  <path d="M590 150 H635" class="line"/>
+  <path d="M805 140 C825 125 830 110 850 105" class="line"/>
+  <path d="M805 165 C825 190 830 220 850 230" class="line"/>
+  <path d="M1020 105 C1045 115 1048 140 1060 160" class="line"/>
+  <path d="M1020 230 C1045 220 1048 195 1060 175" class="line"/>
+
+  <text x="600" y="310" class="small">sequence-aware PUF design + ODE simulation + risk-aware experiment selection</text>
+</svg>

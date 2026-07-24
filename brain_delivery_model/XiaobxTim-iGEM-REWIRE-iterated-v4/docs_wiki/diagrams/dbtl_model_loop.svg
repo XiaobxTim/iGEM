@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="460" viewBox="0 0 1000 460" role="img" aria-labelledby="title desc">
+  <title id="title">Model-guided DBTL loop</title>
+  <desc id="desc">A circular workflow linking design, build, test, learn, and model update for the v4 iGEM modeling project.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+    <style>
+      .box { fill: #f8fafc; stroke: #334155; stroke-width: 2; rx: 16; }
+      .accent { fill: #e0f2fe; stroke: #0369a1; stroke-width: 2; rx: 16; }
+      .text { font-family: Arial, sans-serif; font-size: 24px; fill: #0f172a; text-anchor: middle; font-weight: 600; }
+      .small { font-family: Arial, sans-serif; font-size: 16px; fill: #475569; text-anchor: middle; }
+      .line { stroke: #334155; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect x="390" y="35" width="220" height="90" class="accent"/>
+  <text x="500" y="73" class="text">Design</text>
+  <text x="500" y="100" class="small">PUF, editor, dose, time</text>
+
+  <rect x="695" y="185" width="220" height="90" class="box"/>
+  <text x="805" y="223" class="text">Build</text>
+  <text x="805" y="250" class="small">construct and assay plan</text>
+
+  <rect x="390" y="335" width="220" height="90" class="box"/>
+  <text x="500" y="373" class="text">Test</text>
+  <text x="500" y="400" class="small">qPCR, Western, amplicon</text>
+
+  <rect x="85" y="185" width="220" height="90" class="box"/>
+  <text x="195" y="223" class="text">Learn</text>
+  <text x="195" y="250" class="small">fit parameters, reduce uncertainty</text>
+
+  <rect x="390" y="185" width="220" height="90" class="accent"/>
+  <text x="500" y="218" class="text">Model</text>
+  <text x="500" y="245" class="small">simulate and recommend</text>
+
+  <path d="M610 80 C700 100 760 130 800 185" class="line"/>
+  <path d="M805 275 C760 325 690 355 610 380" class="line"/>
+  <path d="M390 380 C305 360 240 325 200 275" class="line"/>
+  <path d="M195 185 C240 130 300 100 390 80" class="line"/>
+
+  <path d="M500 125 V185" class="line"/>
+  <path d="M610 230 H695" class="line"/>
+  <path d="M390 230 H305" class="line"/>
+  <path d="M500 335 V275" class="line"/>
+
+  <text x="500" y="300" class="small">model turns each wet-lab result into the next design decision</text>
+</svg>

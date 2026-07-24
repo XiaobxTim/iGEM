@@ -1,0 +1,10 @@
+key,value
+n_sites,4.0
+effective_pool,1.8599999999999999
+relative_binding,0.15139784946236562
+relative_catalysis,0.1086021505376344
+pool_key,S_puf_off_init
+base_offtarget_pool,1.5
+applied_offtarget_pool,1.8599999999999999
+applied_offtarget_k_on,0.002270967741935484
+applied_offtarget_k_cat,0.0006516129032258064

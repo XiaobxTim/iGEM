@@ -1,0 +1,7 @@
+design_id,editor_type,puf_repeats,target_site,puf_score_112,puf_score_158,mismatch_count,accessibility_112,accessibility_158,distance_112,distance_158,uc_context_112,uc_context_158,local_bystander_risk,deaminase_background_prior,editor_activity_scale,notes
+10R-design-4,A3A,10,APOE112,0.95,0.25,0,0.75,0.45,2,7,1.0,0.4,0.04,0.8,1.0,preferred E4-to-E3-like candidate
+10R-dual-site,A3A,10,APOE112_APOE158,0.85,0.65,1,0.70,0.55,2,2,1.0,0.8,0.10,0.9,1.0,dual-edit candidate with higher APOE2-like risk
+8R-design-2,A3A,8,APOE112,0.70,0.20,1,0.65,0.40,3,8,0.8,0.3,0.08,1.2,1.0,lower-specificity legacy style design
+10R-proapobec,ProAPOBEC,10,APOE112,0.90,0.30,0,0.75,0.45,2,6,1.0,0.4,0.03,0.4,1.0,engineered deaminase candidate
+inactive-control,A3A,10,control,0.90,0.30,0,0.75,0.45,2,6,0.0,0.0,0.00,0.0,0.0,inactive deaminase control
+puf-only-control,A3A,10,control,0.90,0.30,0,0.75,0.45,2,6,0.0,0.0,0.00,0.0,0.0,PUF binding control without active deaminase

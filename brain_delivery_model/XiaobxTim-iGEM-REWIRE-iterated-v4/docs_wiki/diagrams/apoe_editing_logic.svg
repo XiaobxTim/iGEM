@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="420" viewBox="0 0 1000 420" role="img" aria-labelledby="title desc">
+  <title id="title">APOE112 and APOE158 editing logic</title>
+  <desc id="desc">A schematic showing how editing APOE codon 112 and codon 158 creates APOE3-like, APOE2-like, and mixed products.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+    <style>
+      .box { fill: #f8fafc; stroke: #334155; stroke-width: 2; rx: 16; }
+      .good { fill: #dcfce7; stroke: #15803d; stroke-width: 2; rx: 16; }
+      .risk { fill: #fee2e2; stroke: #b91c1c; stroke-width: 2; rx: 16; }
+      .mixed { fill: #fef3c7; stroke: #b45309; stroke-width: 2; rx: 16; }
+      .text { font-family: Arial, sans-serif; font-size: 22px; fill: #0f172a; text-anchor: middle; font-weight: 600; }
+      .small { font-family: Arial, sans-serif; font-size: 17px; fill: #475569; text-anchor: middle; }
+      .line { stroke: #334155; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect x="390" y="30" width="220" height="95" class="box"/>
+  <text x="500" y="68" class="text">APOE4-like RNA</text>
+  <text x="500" y="98" class="small">Arg112 / Arg158</text>
+
+  <rect x="90" y="190" width="230" height="105" class="good"/>
+  <text x="205" y="230" class="text">APOE3-like</text>
+  <text x="205" y="260" class="small">edit 112 only</text>
+  <text x="205" y="282" class="small">Cys112 / Arg158</text>
+
+  <rect x="390" y="190" width="220" height="105" class="mixed"/>
+  <text x="500" y="230" class="text">Mixed edit</text>
+  <text x="500" y="260" class="small">edit 158 only</text>
+  <text x="500" y="282" class="small">Arg112 / Cys158</text>
+
+  <rect x="690" y="190" width="230" height="105" class="risk"/>
+  <text x="805" y="230" class="text">APOE2-like</text>
+  <text x="805" y="260" class="small">edit 112 and 158</text>
+  <text x="805" y="282" class="small">Cys112 / Cys158</text>
+
+  <path d="M455 125 C390 150 300 165 230 190" class="line"/>
+  <path d="M500 125 V190" class="line"/>
+  <path d="M545 125 C610 150 700 165 780 190" class="line"/>
+  <path d="M320 242 H390" class="line"/>
+  <path d="M610 242 H690" class="line"/>
+
+  <text x="205" y="340" class="small">desired therapeutic direction</text>
+  <text x="805" y="340" class="small">tracked as LDLR-binding risk proxy</text>
+</svg>
