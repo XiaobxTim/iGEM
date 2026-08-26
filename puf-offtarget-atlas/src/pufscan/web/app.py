@@ -274,6 +274,8 @@ def create_app(
         "potential_editing_events.tsv",
         "summary.json",
         "run_metadata.json",
+        "brain_candidate_panel.csv",
+        "brain_candidate_panel.metadata.json",
     }
 
     @app.get("/runs/{run_id}/downloads/{artifact}")

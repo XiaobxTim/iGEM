@@ -101,6 +101,8 @@ def test_completed_run_exposes_results_and_candidate_partial(tmp_path: Path) -> 
     detail = client.get(f"/runs/{run_id}/candidates/1")
 
     assert "Candidate sites" in result.text
+    assert "Use in Brain Delivery Model" in result.text
+    assert f'/runs/{run_id}/downloads/brain_candidate_panel.csv' in result.text
     assert "/assets/plotly.js" in result.text
     assert "Filter candidate sites" in result.text
     assert candidates.status_code == 200
@@ -109,8 +111,14 @@ def test_completed_run_exposes_results_and_candidate_partial(tmp_path: Path) -> 
     assert "Sequence alignment" in detail.text
 
     report_download = client.get(f"/runs/{run_id}/downloads/report.html")
+    panel_download = client.get(f"/runs/{run_id}/downloads/brain_candidate_panel.csv")
+    panel_metadata = client.get(
+        f"/runs/{run_id}/downloads/brain_candidate_panel.metadata.json"
+    )
     missing_download = client.get(f"/runs/{run_id}/downloads/secrets.txt")
     assert report_download.status_code == 200
+    assert panel_download.status_code == 200
+    assert panel_metadata.status_code == 200
     assert missing_download.status_code == 404
 
 
