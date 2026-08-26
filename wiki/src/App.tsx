@@ -30,7 +30,9 @@ function Footer() {
 
 function Layout({ children }: { children: ReactNode }) {
   const { pathname } = useLocation()
-  useEffect(() => window.scrollTo({ top: 0 }), [pathname])
+  useEffect(() => {
+    window.scrollTo({ top: 0 })
+  }, [pathname])
   return <><Header /><main>{children}</main><Footer /></>
 }
 
