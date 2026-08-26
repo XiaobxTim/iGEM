@@ -9,9 +9,11 @@ from pydantic import BaseModel, Field
 
 class RunMetadata(BaseModel):
     software_version: str
-    gencode_release: int
+    gencode_release: int | None = None
     species: str = "Homo sapiens"
-    genome_build: str = "GRCh38"
+    genome_build: str = "GRCh38.p14"
+    annotation_provider: str = "GENCODE"
+    annotation_release: str = "50"
     status: Literal["running", "complete", "failed"]
     parameters: dict[str, Any]
     input_files: dict[str, str | None]
@@ -26,4 +28,3 @@ class RunResult(BaseModel):
     output_dir: Path
     candidate_count: int
     summary: dict[str, Any]
-

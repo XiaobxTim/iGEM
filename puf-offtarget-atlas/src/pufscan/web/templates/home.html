@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}PUF-OffTarget Atlas · Transcriptome-wide RNA search{% endblock %}
+{% block content %}
+<main>
+  <section class="hero">
+    <div class="hero-copy reveal">
+      <p class="eyebrow"><span></span> Transcriptome-wide RNA targeting</p>
+      <h1>Trace every<br><em>possible match.</em></h1>
+      <p class="hero-lede">Screen a programmable PUF sequence against an annotated transcriptome. Rank possible off-target sites by sequence, context, expression and RNA accessibility.</p>
+      <div class="base-legend" aria-label="RNA nucleotide colors">
+        <span class="base base-a">A</span><span class="base base-c">C</span><span class="base base-g">G</span><span class="base base-u">U</span>
+        <small>8–12 nt recognition sequence</small>
+      </div>
+    </div>
+    <aside class="hero-aside reveal delay-1" aria-label="Model scope">
+      <span class="micro-label">THE MODEL ASKS</span>
+      <blockquote>“Where else could this PUF bind—and which candidates should we validate first?”</blockquote>
+      <div class="scope-line"><span>01</span><p>Enumerate near matches</p></div>
+      <div class="scope-line"><span>02</span><p>Map transcript context</p></div>
+      <div class="scope-line"><span>03</span><p>Prioritize evidence</p></div>
+    </aside>
+  </section>
+
+  <section id="scan" class="search-stage reveal delay-2">
+    <div class="section-kicker"><span>SEARCH CONSOLE</span><span>PUF / TRANSCRIPTOME</span></div>
+    <form class="scan-form" method="post" action="/runs" data-scan-form>
+      {% if error %}<div class="form-alert" role="alert"><strong>Check your query</strong><span>{{ error }}</span></div>{% endif %}
+      <div class="query-row">
+        <label class="field query-field">
+          <span>PUF target RNA sequence</span>
+          <input name="query" value="AACGUCUAUA" minlength="8" maxlength="12" pattern="[ACGTUacgtu]{8,12}" autocomplete="off" spellcheck="false" required data-sequence-input>
+          <small>RNA or DNA alphabet accepted · normalized to RNA</small>
+        </label>
+        <div class="sequence-preview" aria-live="polite" data-sequence-preview></div>
+      </div>
+
+      <div class="primary-grid">
+        <label class="field">
+          <span>Reference transcriptome</span>
+          <select name="transcriptome_id" required>
+            {% for item in transcriptomes %}
+            <option value="{{ item.spec.id }}" {% if not item.availability.ready %}disabled{% endif %}>{{ item.spec.display_name }} · {{ item.spec.assembly }}{% if not item.availability.ready %} — not installed{% endif %}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label class="field compact-field">
+          <span>Maximum mismatches</span>
+          <select name="max_mismatches"><option value="0">0 · exact only</option><option value="1">1</option><option value="2" selected>2 · recommended</option><option value="3">3 · broad</option></select>
+        </label>
+      </div>
+
+      <fieldset class="mode-switch">
+        <legend>Analysis mode</legend>
+        <label><input type="radio" name="mode" value="binding_only" checked><span><strong>Binding screen</strong><small>Potential PUF occupancy</small></span></label>
+        <label><input type="radio" name="mode" value="editor_fusion"><span><strong>Editor fusion</strong><small>Simulate editable bases</small></span></label>
+      </fieldset>
+
+      <details class="advanced-panel">
+        <summary><span>Advanced analysis settings</span><small>Structure, orientation and editing window</small></summary>
+        <div class="advanced-grid">
+          <label class="field editor-only" hidden><span>Editor chemistry</span><select name="editor"><option value="APOBEC_C2U">APOBEC · C→U</option><option value="ADAR_A2I">ADAR · A→I</option></select></label>
+          <label class="field editor-only" hidden><span>Editing window</span><input name="editing_window" value="-15:10" placeholder="START:END"></label>
+          <label class="toggle-field"><input type="checkbox" name="search_reverse_complement"><span><strong>Reverse-complement search</strong><small>Off by default for transcript FASTA</small></span></label>
+          <label class="toggle-field"><input type="checkbox" name="structure_enabled"><span><strong>RNA accessibility</strong><small>Requires RNAplfold · slower</small></span></label>
+        </div>
+      </details>
+
+      <div class="submit-row">
+        <p><strong>Interpretation:</strong> results prioritize candidates; they do not prove binding or editing.</p>
+        <button class="primary-button" type="submit"><span>Run transcriptome screen</span><i aria-hidden="true">→</i></button>
+      </div>
+    </form>
+  </section>
+
+  <section id="workflow" class="workflow-section">
+    <div class="section-heading"><p class="eyebrow"><span></span> Transparent by design</p><h2>From motif to a validation shortlist.</h2></div>
+    <div class="workflow-grid">
+      <article><b>01</b><h3>Enumerate</h3><p>Aho–Corasick search captures exact and substitution-only matches across transcript isoforms.</p></article>
+      <article><b>02</b><h3>Annotate</h3><p>Each match is projected to genomic blocks, CDS/UTR context, splice proximity and editable bases.</p></article>
+      <article><b>03</b><h3>Prioritize</h3><p>Available evidence is combined with an explicit, re-normalized heuristic score.</p></article>
+    </div>
+  </section>
+
+  <section id="data" class="data-section">
+    <div><p class="eyebrow"><span></span> Reference data</p><h2>Versioned transcriptomes,<br>visible assumptions.</h2></div>
+    <div class="data-list">
+      {% for item in transcriptomes %}<div class="data-row"><span class="status-dot {{ 'ready' if item.availability.ready else 'missing' }}"></span><div><strong>{{ item.spec.species }}</strong><small>{{ item.spec.provider }} {{ item.spec.release }} · {{ item.spec.assembly }}</small></div><span>{{ 'READY' if item.availability.ready else 'NOT INSTALLED' }}</span></div>{% endfor %}
+    </div>
+  </section>
+
+  <section class="custom-section">
+    <details>
+      <summary><div><span class="micro-label">CUSTOM DATA</span><h2>Bring another transcriptome.</h2></div><i>＋</i></summary>
+      <form method="post" action="/transcriptomes/custom" enctype="multipart/form-data" class="upload-form">
+        <label class="field"><span>Dataset ID</span><input name="identifier" pattern="[a-z0-9][a-z0-9-]{1,62}" placeholder="zebrafish-demo" required></label>
+        <label class="field"><span>Display name</span><input name="display_name" placeholder="Zebrafish custom" required></label>
+        <label class="field"><span>Scientific name</span><input name="species" placeholder="Danio rerio" required></label>
+        <label class="field"><span>Assembly</span><input name="assembly" placeholder="GRCz11" required></label>
+        <label class="field"><span>Provider</span><input name="provider" value="Custom" required></label>
+        <label class="field"><span>Release</span><input name="release" value="1" required></label>
+        <label class="file-field"><span>Transcript FASTA</span><input type="file" name="fasta" accept=".fa,.fasta,.gz" required><small>.fa, .fasta or gzip</small></label>
+        <label class="file-field"><span>Annotation GTF</span><input type="file" name="gtf" accept=".gtf,.gz" required><small>≥90% transcript ID overlap</small></label>
+        <button class="secondary-button" type="submit">Validate and index dataset</button>
+      </form>
+    </details>
+  </section>
+</main>
+{% endblock %}

@@ -1,0 +1,7 @@
+<div id="run-progress" class="progress-panel" {% if run.status not in ('completed', 'failed') %}hx-get="/runs/{{ run.id }}/progress" hx-trigger="every 2s" hx-swap="outerHTML"{% endif %}>
+  <div class="progress-meta"><span class="status-pill status-{{ run.status }}">{{ run.status|replace('_', ' ')|title }}</span><strong>{{ "%.0f"|format(run.progress * 100) }}%</strong></div>
+  <div class="progress-track"><span style="width: {{ run.progress * 100 }}%"></span></div>
+  <p>{{ run.stage }}</p>
+  {% if run.error %}<div class="form-alert" role="alert"><strong>Analysis failed</strong><span>{{ run.error }}</span></div>{% endif %}
+  {% if run.status == 'completed' %}<p><a class="primary-button" href="/runs/{{ run.id }}">Open results <i>→</i></a></p><script>window.location.reload()</script>{% endif %}
+</div>

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Analysis in progress · PUF-OffTarget Atlas{% endblock %}
+{% block head %}{% if run.status not in ('completed', 'failed') %}<meta http-equiv="refresh" content="8">{% endif %}{% endblock %}
+{% block content %}
+<main class="run-shell">
+  <a class="back-link" href="/">← New search</a>
+  <section class="run-card">
+    <div class="run-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
+    <p class="eyebrow"><span></span> Analysis run {{ run.id[:8] }}</p>
+    <h1>Mapping the transcriptome.</h1>
+    <p class="run-lede">The scan continues in a background worker. This page updates automatically and can be reopened safely.</p>
+    {% include "partials/progress.html" %}
+  </section>
+</main>
+{% endblock %}

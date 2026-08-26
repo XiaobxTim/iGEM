@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ candidate.gene_name or candidate.gene_id }} candidate · PUF-OffTarget Atlas{% endblock %}
+{% block head %}<script src="/assets/plotly.js"></script>{% endblock %}
+{% block content %}
+<main class="detail-shell">
+  <a class="back-link" href="/runs/{{ run.id }}">← Back to all candidates</a>
+  <section class="detail-hero">
+    <div><p class="eyebrow"><span></span> Candidate rank {{ candidate.rank }}</p><h1>{{ candidate.gene_name or candidate.gene_id }}</h1><p>{{ candidate.transcript_id }} · {{ candidate.chromosome }} · {{ candidate.transcript_region }}</p></div>
+    <div class="risk-orb {{ 'very-high' if candidate.risk_score >= 75 else 'high' if candidate.risk_score >= 50 else 'moderate' if candidate.risk_score >= 25 else 'low' }}"><strong>{{ "%.1f"|format(candidate.risk_score) }}</strong><span>priority score</span></div>
+  </section>
+
+  <section class="alignment-panel">
+    <div class="panel-heading"><span>01 · SEQUENCE</span><h2>Sequence alignment</h2></div>
+    <div class="alignment-row"><label>QUERY <small>5′→3′</small></label><div>{% for query, hit in alignment %}<span class="base-letter base-{{ query|lower }}">{{ query }}</span>{% endfor %}</div></div>
+    <div class="alignment-marks"><label></label><div>{% for query, hit in alignment %}<span>{{ '│' if query == hit else '×' }}</span>{% endfor %}</div></div>
+    <div class="alignment-row"><label>HIT <small>5′→3′</small></label><div>{% for query, hit in alignment %}<span class="base-letter base-{{ hit|lower }} {{ 'mismatch' if query != hit }}">{{ hit }}</span>{% endfor %}</div></div>
+    <div class="alignment-stats"><span><strong>{{ candidate.mismatch_count }}</strong> mismatches</span><span><strong>{{ "%.0f%%"|format(candidate.sequence_identity * 100) }}</strong> identity</span><span><strong>{{ "%.3f"|format(candidate.sequence_score) }}</strong> sequence score</span></div>
+  </section>
+
+  <section class="detail-grid">
+    <article class="panel wide"><div class="panel-heading"><span>02 · TRANSCRIPT</span><h2>Genomic context</h2></div>{{ schematic|safe }}</article>
+    <article class="panel"><div class="panel-heading"><span>03 · CONSEQUENCE</span><h2>Potential effect</h2></div><p class="consequence-copy">{{ candidate.consequence_summary }}</p><dl><div><dt>Evidence</dt><dd>{{ candidate.consequence_evidence_level }}</dd></div><div><dt>Region</dt><dd>{{ candidate.transcript_region }}</dd></div><div><dt>Editable bases</dt><dd>{{ candidate.editable_base_count or 0 }}</dd></div></dl></article>
+    <article class="panel"><div class="panel-heading"><span>04 · ACCESSIBILITY</span><h2>RNA structure</h2></div>{{ accessibility|safe }}</article>
+  </section>
+</main>
+{% endblock %}

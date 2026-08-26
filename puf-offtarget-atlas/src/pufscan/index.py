@@ -23,7 +23,17 @@ def _copy_or_decompress(source: Path, destination: Path) -> None:
         shutil.copyfile(source, destination)
 
 
-def prepare_gencode(fasta_path: Path, gtf_path: Path, output_dir: Path, batch_size: int = 50000) -> Path:
+def prepare_transcriptome(
+    fasta_path: Path,
+    gtf_path: Path,
+    output_dir: Path,
+    batch_size: int = 50000,
+    *,
+    species: str = "Homo sapiens",
+    assembly: str = "GRCh38.p14",
+    provider: str = "GENCODE",
+    release: str = "50",
+) -> Path:
     output_dir.mkdir(parents=True, exist_ok=True)
     prepared_fasta = output_dir / "transcripts.fa"
     _copy_or_decompress(fasta_path, prepared_fasta)
@@ -66,6 +76,10 @@ def prepare_gencode(fasta_path: Path, gtf_path: Path, output_dir: Path, batch_si
     pq.write_table(pa.Table.from_pylist(segment_rows), output_dir / "transcript_segments.parquet", compression="zstd")
     manifest = {
         "format_version": 1,
+        "species": species,
+        "assembly": assembly,
+        "provider": provider,
+        "release": release,
         "source_fasta": str(fasta_path),
         "source_gtf": str(gtf_path),
         "source_fasta_sha256": sha256_file(fasta_path),
@@ -81,3 +95,9 @@ def prepare_gencode(fasta_path: Path, gtf_path: Path, output_dir: Path, batch_si
     manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     return manifest_path
 
+
+def prepare_gencode(
+    fasta_path: Path, gtf_path: Path, output_dir: Path, batch_size: int = 50000
+) -> Path:
+    """Backward-compatible wrapper for the original human GENCODE command."""
+    return prepare_transcriptome(fasta_path, gtf_path, output_dir, batch_size)

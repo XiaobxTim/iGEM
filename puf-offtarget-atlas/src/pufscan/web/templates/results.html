@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ summary.input_motif }} results · PUF-OffTarget Atlas{% endblock %}
+{% block head %}<script src="/assets/plotly.js"></script>{% endblock %}
+{% block content %}
+<main class="results-shell">
+  <section class="result-hero">
+    <div><a class="back-link" href="/">← New search</a><p class="eyebrow"><span></span> Completed transcriptome screen</p><h1><span class="rna-label">5′</span> {{ summary.input_motif }} <span class="rna-label">3′</span></h1><p>{{ summary.species }} · {{ summary.genome_build }} · {{ summary.annotation_release }}</p></div>
+    <div class="result-actions"><a class="secondary-button" href="/runs/{{ run.id }}/downloads/report.html">Offline HTML</a><a class="primary-button" href="/runs/{{ run.id }}/downloads/top_hits.tsv">Download top hits <i>↓</i></a></div>
+  </section>
+
+  <section class="metrics-grid" aria-label="Run summary">
+    <article><span>Candidate sites</span><strong>{{ "{:,}".format(summary.candidate_sites) }}</strong><small>transcript-level matches</small></article>
+    <article><span>Candidate genes</span><strong>{{ "{:,}".format(summary.candidate_genes) }}</strong><small>unique annotated genes</small></article>
+    <article><span>Unique loci</span><strong>{{ "{:,}".format(summary.unique_genomic_loci) }}</strong><small>genomic coordinates</small></article>
+    <article><span>Runtime</span><strong>{{ "%.1f"|format(summary.runtime_seconds) }}s</strong><small>end-to-end</small></article>
+  </section>
+
+  <section class="chart-grid">
+    <article class="panel"><div class="panel-heading"><span>01 · SEQUENCE</span><h2>Mismatch distribution</h2></div>{% if mismatch_plot %}{{ mismatch_plot|safe }}{% else %}<p class="empty-state">No candidates to plot.</p>{% endif %}</article>
+    <article class="panel"><div class="panel-heading"><span>02 · PRIORITY</span><h2>Risk score distribution</h2></div>{% if risk_plot %}{{ risk_plot|safe }}{% else %}<p class="empty-state">No candidates to plot.</p>{% endif %}</article>
+  </section>
+
+  <section class="candidate-browser">
+    <div class="browser-heading"><div><p class="eyebrow"><span></span> Ranked evidence</p><h2>Candidate sites</h2></div><p>Select a row for sequence alignment, transcript context and editing consequences.</p></div>
+    <form class="filter-bar" aria-label="Filter candidate sites" hx-get="/runs/{{ run.id }}/candidates" hx-target="#candidate-table" hx-trigger="change delay:250ms, keyup changed delay:400ms from:input">
+      <label><span>Gene</span><input name="gene" placeholder="e.g. APOE"></label>
+      <label><span>Transcript</span><input name="transcript" placeholder="ENST…"></label>
+      <label><span>Region</span><select name="region"><option value="">All regions</option><option>CDS</option><option value="5UTR">5′ UTR</option><option value="3UTR">3′ UTR</option><option>splice_proximal</option><option>exonic_non_coding</option></select></label>
+      <label><span>Mismatch</span><select name="mismatch"><option value="">Any</option><option>0</option><option>1</option><option>2</option><option>3</option></select></label>
+      <label><span>Min. risk</span><input name="min_risk" type="number" min="0" max="100" value="0"></label>
+      <input type="hidden" name="page_size" value="25">
+    </form>
+    <div id="candidate-table">{% include "partials/candidate_table.html" %}</div>
+  </section>
+
+  <section class="methods-strip"><div><span>Read before interpreting</span><h2>Priority is not probability.</h2></div><p>Sequence similarity, bulk expression and predicted accessibility are screening evidence. Every candidate requires experimental validation.</p><a href="/runs/{{ run.id }}/downloads/run_metadata.json">Run metadata →</a></section>
+</main>
+{% endblock %}

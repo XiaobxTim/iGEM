@@ -1,4 +1,4 @@
-.PHONY: install test lint typecheck check app example
+.PHONY: install test lint typecheck check app legacy-app example
 
 install:
 	python -m pip install -e ".[dev]"
@@ -15,8 +15,10 @@ typecheck:
 check: test lint typecheck
 
 app:
+	pufscan web
+
+legacy-app:
 	streamlit run app/streamlit_app.py
 
 example:
 	pufscan scan --query AACGUCUAUA --max-mismatches 1 --gencode-fasta tests/data/synthetic.fa --gencode-gtf tests/data/synthetic.gtf --gtex-expression tests/data/expression.tsv --target-tissue Liver --mode binding_only --no-structure --output results
-
