@@ -26,7 +26,7 @@ def create_app() -> FastAPI:
             name="index.html",
             context={
                 "designs": get_designs(),
-                "wiki_url": os.getenv("IGEM_WIKI_URL", "../wiki/dist/index.html"),
+                "wiki_url": os.getenv("IGEM_WIKI_URL", "http://127.0.0.1:5173"),
             },
         )
 

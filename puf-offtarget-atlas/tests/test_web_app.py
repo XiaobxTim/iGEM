@@ -40,6 +40,7 @@ def test_home_lists_available_transcriptomes(tmp_path: Path) -> None:
     assert "PUF-OffTarget Atlas" in response.text
     assert "Synthetic demo" in response.text
     assert "Advanced analysis settings" in response.text
+    assert "Project Wiki" in response.text
     assert 'class="base base-a"' in response.text
     assert client.get("/static/atlas.css").status_code == 200
 
