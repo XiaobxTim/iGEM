@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import logging
+import multiprocessing
 import os
 import shutil
 import sys
@@ -18,8 +19,14 @@ from pufscan.gencode import download_gencode
 from pufscan.index import prepare_gencode
 from pufscan.pipeline import run_scan
 from pufscan.report import generate_report
+from pufscan.transcriptomes import TranscriptomeRegistry, TranscriptomeSpec
 
-app = typer.Typer(help="Prioritize potential PUF RNA-binding candidates in the human transcriptome.", no_args_is_help=True)
+app = typer.Typer(
+    help="Prioritize potential PUF RNA-binding candidates in annotated transcriptomes.",
+    no_args_is_help=True,
+)
+transcriptome_app = typer.Typer(help="Download, register, and inspect transcriptome datasets.")
+app.add_typer(transcriptome_app, name="transcriptome")
 LOGGER = logging.getLogger(__name__)
 
 
@@ -149,6 +156,119 @@ def doctor_command(
     required_missing = any(value == "MISSING" for key, value in checks.items() if key.startswith("GENCODE"))
     if required_missing or checks["Output writable"] != "OK":
         raise typer.Exit(1)
+
+
+@transcriptome_app.command("download")
+def transcriptome_download_command(
+    species: Annotated[str, typer.Option(help="human or mouse")] = "human",
+    release: Annotated[str | None, typer.Option()] = None,
+    output: Annotated[Path | None, typer.Option()] = None,
+    all_regions: Annotated[bool, typer.Option("--all-regions/--reference-only")] = True,
+) -> None:
+    if species not in {"human", "mouse"}:
+        raise typer.BadParameter("species must be 'human' or 'mouse'")
+    selected_release = release or ("50" if species == "human" else "M39")
+    selected_output = output or Path(
+        "data/gencode_v50" if species == "human" else "data/gencode_m39"
+    )
+    manifest = download_gencode(
+        selected_release,
+        selected_output,
+        all_regions,
+        species=species,  # type: ignore[arg-type]
+    )
+    typer.echo(f"Download manifest: {manifest}")
+
+
+@transcriptome_app.command("register")
+def transcriptome_register_command(
+    identifier: Annotated[str, typer.Option("--id")],
+    display_name: Annotated[str, typer.Option("--display-name")],
+    species: Annotated[str, typer.Option()],
+    assembly: Annotated[str, typer.Option()],
+    fasta: Annotated[Path, typer.Option(exists=True)],
+    annotation: Annotated[Path, typer.Option(exists=True)],
+    provider: Annotated[str, typer.Option()] = "Custom",
+    release: Annotated[str, typer.Option()] = "1",
+    expression: Annotated[Path | None, typer.Option(exists=True)] = None,
+    database: Annotated[Path, typer.Option()] = Path(".pufscan_web/atlas.sqlite3"),
+) -> None:
+    registry = TranscriptomeRegistry(database, Path.cwd())
+    registry.add(
+        TranscriptomeSpec(
+            id=identifier,
+            display_name=display_name,
+            species=species,
+            assembly=assembly,
+            provider=provider,
+            release=release,
+            fasta_path=fasta.resolve(),
+            annotation_path=annotation.resolve(),
+            expression_path=expression.resolve() if expression else None,
+            source="custom",
+        )
+    )
+    typer.echo(f"Registered transcriptome: {identifier}")
+
+
+@transcriptome_app.command("list")
+def transcriptome_list_command(
+    database: Annotated[Path, typer.Option()] = Path(".pufscan_web/atlas.sqlite3"),
+) -> None:
+    registry = TranscriptomeRegistry(database, Path.cwd())
+    for spec in registry.list():
+        state = "ready" if registry.availability(spec.id).ready else "not installed"
+        typer.echo(
+            f"{spec.id}\t{spec.species}\t{spec.provider} {spec.release}\t{spec.assembly}\t{state}"
+        )
+
+
+def _worker_process(database: Path) -> None:
+    from pufscan.web.jobs import JobStore
+    from pufscan.web.worker import run_worker
+
+    run_worker(JobStore(database))
+
+
+@app.command("worker")
+def worker_command(
+    database: Annotated[Path, typer.Option()] = Path(".pufscan_web/atlas.sqlite3"),
+) -> None:
+    """Run a standalone background scan worker."""
+    _worker_process(database)
+
+
+@app.command("web")
+def web_command(
+    host: Annotated[str, typer.Option()] = "127.0.0.1",
+    port: Annotated[int, typer.Option()] = 8000,
+    database: Annotated[Path, typer.Option()] = Path(".pufscan_web/atlas.sqlite3"),
+    results: Annotated[Path, typer.Option()] = Path("results/web"),
+    with_worker: Annotated[bool, typer.Option("--with-worker/--no-worker")] = True,
+) -> None:
+    """Launch the Atlas website, with a local worker by default."""
+    import uvicorn
+
+    from pufscan.web.app import create_app
+
+    process: multiprocessing.Process | None = None
+    if with_worker:
+        process = multiprocessing.Process(target=_worker_process, args=(database,), daemon=True)
+        process.start()
+    try:
+        uvicorn.run(
+            create_app(
+                project_root=Path.cwd(),
+                database_path=database,
+                results_dir=results,
+            ),
+            host=host,
+            port=port,
+        )
+    finally:
+        if process is not None and process.is_alive():
+            process.terminate()
+            process.join(timeout=5)
 
 
 @app.command("compare-designs")

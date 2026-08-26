@@ -6,17 +6,41 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
+ATLAS_TEAL = "#0b7a75"
+ATLAS_NAVY = "#0b2239"
+ATLAS_CORAL = "#d95852"
+ATLAS_AMBER = "#d59628"
+ATLAS_GRID = "#dfe7e4"
+
+
+def _apply_atlas_theme(figure: go.Figure, height: int, margins: dict[str, int]) -> None:
+    figure.update_layout(
+        template="plotly_white",
+        height=height,
+        margin=margins,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(family="Avenir Next, sans-serif", color="#41545b", size=11),
+        hoverlabel=dict(bgcolor=ATLAS_NAVY, bordercolor=ATLAS_NAVY, font_color="white"),
+    )
+    figure.update_xaxes(gridcolor=ATLAS_GRID, linecolor=ATLAS_GRID, zeroline=False)
+    figure.update_yaxes(gridcolor=ATLAS_GRID, linecolor=ATLAS_GRID, zeroline=False)
+
 
 def mismatch_distribution(frame: pd.DataFrame) -> str:
     counts = frame["mismatch_count"].value_counts().reindex(range(4), fill_value=0).sort_index()
     figure = px.bar(x=counts.index, y=counts.values, labels={"x": "Mismatches", "y": "Candidates"})
-    figure.update_layout(template="plotly_white", height=330, margin=dict(l=40, r=20, t=30, b=40))
+    figure.update_traces(marker_color=[ATLAS_TEAL, "#3278b7", ATLAS_AMBER, ATLAS_CORAL])
+    _apply_atlas_theme(figure, 330, dict(l=40, r=20, t=30, b=40))
     return cast(str, figure.to_html(full_html=False, include_plotlyjs=False))
 
 
 def risk_distribution(frame: pd.DataFrame) -> str:
     figure = px.histogram(frame, x="risk_score", nbins=20, labels={"risk_score": "Risk priority score"})
-    figure.update_layout(template="plotly_white", height=330, margin=dict(l=40, r=20, t=30, b=40))
+    figure.update_traces(marker_color=ATLAS_TEAL, marker_line_width=0)
+    for boundary, color in ((25, "#789485"), (50, ATLAS_AMBER), (75, ATLAS_CORAL)):
+        figure.add_vline(x=boundary, line_dash="dot", line_color=color, opacity=0.7)
+    _apply_atlas_theme(figure, 330, dict(l=40, r=20, t=30, b=40))
     return cast(str, figure.to_html(full_html=False, include_plotlyjs=False))
 
 
@@ -41,7 +65,7 @@ def transcript_schematic(row: pd.Series) -> str:
     if positions:
         figure.add_trace(go.Scatter(x=positions, y=[0.08] * len(positions), mode="markers", name="Potential editable base", marker=dict(color="#f0a202", size=9)))
     figure.update_yaxes(visible=False)
-    figure.update_layout(template="plotly_white", height=220, margin=dict(l=30, r=20, t=30, b=30))
+    _apply_atlas_theme(figure, 220, dict(l=30, r=20, t=30, b=30))
     return cast(str, figure.to_html(full_html=False, include_plotlyjs=False))
 
 
@@ -63,8 +87,13 @@ def tissue_heatmap(frame: pd.DataFrame, top_n: int = 20) -> str:
     if not rows:
         return "<p>Not available</p>"
     heatmap = pd.DataFrame(rows).set_index("gene")
-    figure = px.imshow(heatmap, aspect="auto", color_continuous_scale="Viridis", labels={"color": "TPM"})
-    figure.update_layout(template="plotly_white", height=max(300, 28 * len(heatmap)), margin=dict(l=70, r=20, t=30, b=80))
+    figure = px.imshow(
+        heatmap,
+        aspect="auto",
+        color_continuous_scale=["#f5f7f4", "#75c3ba", ATLAS_TEAL, ATLAS_NAVY],
+        labels={"color": "TPM"},
+    )
+    _apply_atlas_theme(figure, max(300, 28 * len(heatmap)), dict(l=70, r=20, t=30, b=80))
     return cast(str, figure.to_html(full_html=False, include_plotlyjs=False))
 
 
@@ -77,7 +106,8 @@ def accessibility_plot(row: pd.Series) -> str:
     window_start = int(row.get("structure_window_transcript_start") or 1)
     positions = list(range(window_start, window_start + len(profile)))
     figure = px.line(x=positions, y=profile, labels={"x": "Transcript position", "y": "Unpaired probability"})
+    figure.update_traces(line_color=ATLAS_TEAL, line_width=2.5)
     figure.add_vrect(x0=row["transcript_start"], x1=row["transcript_end"], fillcolor="#d94841", opacity=0.2, line_width=0)
     figure.update_yaxes(range=[0, 1])
-    figure.update_layout(template="plotly_white", height=330, margin=dict(l=50, r=20, t=30, b=40))
+    _apply_atlas_theme(figure, 330, dict(l=50, r=20, t=30, b=40))
     return cast(str, figure.to_html(full_html=False, include_plotlyjs=False))

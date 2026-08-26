@@ -1,0 +1,14 @@
+<div class="table-meta"><p><strong>{{ "{:,}".format(candidate_page.total) }}</strong> candidates after filters</p><span>Page {{ candidate_page.page }} of {{ candidate_page.pages }}</span></div>
+<div class="table-scroll">
+<table class="candidate-table">
+  <thead><tr><th>Rank</th><th>Gene</th><th>Transcript</th><th>Match</th><th>MM</th><th>Region</th><th>Expression</th><th>Accessibility</th><th>Priority</th><th></th></tr></thead>
+  <tbody>
+  {% for hit in candidate_page.rows %}
+    <tr data-href="/runs/{{ run.id }}/candidates/{{ hit.rank }}">
+      <td class="rank-cell">#{{ hit.rank }}</td><td><strong>{{ hit.gene_name or hit.gene_id }}</strong><small>{{ hit.gene_type or '—' }}</small></td><td class="mono-cell">{{ hit.transcript_id }}</td><td class="mono-cell motif-cell">{{ hit.matched_sequence_rna }}</td><td>{{ hit.mismatch_count }}</td><td><span class="region-chip">{{ hit.transcript_region }}</span></td><td>{{ "%.2f"|format(hit.target_tissue_tpm) if hit.target_tissue_tpm is not none else 'NA' }}</td><td>{{ "%.2f"|format(hit.accessibility_score) if hit.accessibility_score is not none else 'NA' }}</td><td><span class="risk-badge {{ 'very-high' if hit.risk_score >= 75 else 'high' if hit.risk_score >= 50 else 'moderate' if hit.risk_score >= 25 else 'low' }}">{{ "%.1f"|format(hit.risk_score) }}</span></td><td><a class="row-link" href="/runs/{{ run.id }}/candidates/{{ hit.rank }}" aria-label="View candidate {{ hit.rank }}">→</a></td>
+    </tr>
+  {% else %}<tr><td colspan="10" class="empty-state">No candidates match these filters.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% if candidate_page.pages > 1 %}<nav class="pagination" aria-label="Candidate pages"><button {% if candidate_page.page == 1 %}disabled{% endif %} hx-get="/runs/{{ run.id }}/candidates?page={{ candidate_page.page - 1 }}&page_size={{ candidate_page.page_size }}" hx-target="#candidate-table">← Previous</button><span>{{ candidate_page.page }} / {{ candidate_page.pages }}</span><button {% if candidate_page.page == candidate_page.pages %}disabled{% endif %} hx-get="/runs/{{ run.id }}/candidates?page={{ candidate_page.page + 1 }}&page_size={{ candidate_page.page_size }}" hx-target="#candidate-table">Next →</button></nav>{% endif %}

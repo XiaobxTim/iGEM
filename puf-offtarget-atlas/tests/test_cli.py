@@ -11,8 +11,17 @@ RUNNER = CliRunner()
 def test_cli_help_lists_required_commands() -> None:
     result = RUNNER.invoke(app, ["--help"])
     assert result.exit_code == 0
-    for command in ["download-gencode", "prepare-gencode", "prepare-gtex", "scan", "report", "doctor"]:
+    for command in ["download-gencode", "prepare-gencode", "prepare-gtex", "scan", "report", "doctor", "web", "worker", "transcriptome"]:
         assert command in result.stdout
+
+
+def test_transcriptome_cli_lists_mouse_aware_commands() -> None:
+    result = RUNNER.invoke(app, ["transcriptome", "--help"])
+
+    assert result.exit_code == 0
+    assert "download" in result.stdout
+    assert "register" in result.stdout
+    assert "list" in result.stdout
 
 
 def test_cli_scan_runs_on_synthetic_data(tmp_path: Path) -> None:
@@ -63,4 +72,3 @@ def test_editor_cli_requires_window(tmp_path: Path) -> None:
         ],
     )
     assert result.exit_code != 0
-

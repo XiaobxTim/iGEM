@@ -44,6 +44,10 @@ class ScanConfig(BaseModel):
     cache_dir: Path = Path(".pufscan_cache")
     threads: int = Field(default=1, ge=1)
     gencode_release: int = Field(default=50, ge=1)
+    species: str = "Homo sapiens"
+    genome_build: str = "GRCh38.p14"
+    annotation_provider: str = "GENCODE"
+    annotation_release: str = "50"
     position_weights: Path | None = None
     substitution_matrix: Path | None = None
     gene_metadata: Path | None = None
@@ -67,4 +71,3 @@ def load_yaml(path: Path) -> dict[str, Any]:
     if not isinstance(data, dict):
         raise ValueError("YAML configuration root must be a mapping")
     return data
-

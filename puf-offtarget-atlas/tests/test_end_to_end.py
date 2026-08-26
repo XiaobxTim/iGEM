@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 
 from pufscan.config import ScanConfig, StructureConfig
-from pufscan.index import prepare_gencode
+from pufscan.index import prepare_gencode, prepare_transcriptome
 from pufscan.pipeline import run_scan
 
 DATA = Path(__file__).parent / "data"
@@ -77,6 +77,25 @@ def test_prepared_fasta_and_annotation_index_are_reusable(tmp_path: Path) -> Non
         )
     )
     assert result.candidate_count == 6
+
+
+def test_generic_transcriptome_preparation_keeps_provider_metadata(tmp_path: Path) -> None:
+    prepared = tmp_path / "prepared-generic"
+
+    manifest_path = prepare_transcriptome(
+        DATA / "synthetic.fa",
+        DATA / "synthetic.gtf",
+        prepared,
+        species="Mus musculus",
+        assembly="GRCm39",
+        provider="GENCODE",
+        release="M39",
+    )
+
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert manifest["species"] == "Mus musculus"
+    assert manifest["assembly"] == "GRCm39"
+    assert manifest["release"] == "M39"
 
 
 def test_zero_hit_run_still_writes_typed_empty_outputs(tmp_path: Path) -> None:

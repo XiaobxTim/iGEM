@@ -8,15 +8,22 @@ import re
 from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TextIO
+from typing import Literal, TextIO
 
 import requests
 
 LOGGER = logging.getLogger(__name__)
-GENCODE_BASE_URL = "https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_{release}"
+GencodeSpecies = Literal["human", "mouse"]
 
 
-def gencode_filenames(release: int) -> dict[str, str]:
+def gencode_release_url(release: int | str, species: GencodeSpecies = "human") -> str:
+    collection = "Gencode_human" if species == "human" else "Gencode_mouse"
+    return f"https://ftp.ebi.ac.uk/pub/databases/gencode/{collection}/release_{release}"
+
+
+def gencode_filenames(
+    release: int | str, species: GencodeSpecies = "human"
+) -> dict[str, str]:
     return {
         "transcript_fasta": f"gencode.v{release}.transcripts.fa.gz",
         "reference_gtf": f"gencode.v{release}.annotation.gtf.gz",
@@ -50,19 +57,25 @@ def download_file(url: str, destination: Path, timeout: float = 60.0) -> dict[st
     return {"url": url, "path": str(destination), "size_bytes": destination.stat().st_size, "sha256": sha256_file(destination)}
 
 
-def download_gencode(release: int, output_dir: Path, include_all_regions_gtf: bool = True) -> Path:
-    names = gencode_filenames(release)
+def download_gencode(
+    release: int | str,
+    output_dir: Path,
+    include_all_regions_gtf: bool = True,
+    species: GencodeSpecies = "human",
+) -> Path:
+    names = gencode_filenames(release, species)
+    base_url = gencode_release_url(release, species)
     keys = ["transcript_fasta", "reference_gtf"]
     if include_all_regions_gtf:
         keys.append("all_regions_gtf")
-    manifest: dict[str, object] = {"release": release, "files": {}}
+    manifest: dict[str, object] = {"species": species, "release": release, "files": {}}
     for key in keys:
         filename = names[key]
         destination = output_dir / filename
         if destination.exists():
-            record = {"url": f"{GENCODE_BASE_URL.format(release=release)}/{filename}", "path": str(destination), "size_bytes": destination.stat().st_size, "sha256": sha256_file(destination), "skipped_existing": True}
+            record = {"url": f"{base_url}/{filename}", "path": str(destination), "size_bytes": destination.stat().st_size, "sha256": sha256_file(destination), "skipped_existing": True}
         else:
-            record = download_file(f"{GENCODE_BASE_URL.format(release=release)}/{filename}", destination)
+            record = download_file(f"{base_url}/{filename}", destination)
         manifest["files"][key] = record  # type: ignore[index]
     manifest_path = output_dir / "download_manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")

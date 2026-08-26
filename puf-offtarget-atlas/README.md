@@ -44,15 +44,24 @@ conda install -c bioconda viennarna
 
 ## 快速开始
 
-### 启动 Streamlit 页面
+### 启动 Atlas 网站
 
 ```bash
 cd /Users/benxiang/Desktop/iGEM/puf-offtarget-atlas
 conda activate xbx_env
-streamlit run app/streamlit_app.py
+pufscan web
 ```
 
-浏览器默认访问 `http://localhost:8501`。页面预填了合成测试数据，可输入 `AACGUCUAUA` 并点击 **Run analysis** 完成一次端到端分析。
+浏览器访问 `http://127.0.0.1:8000`。新界面采用独立的科学数据库风格，支持选择人或小鼠转录组、上传自定义转录组、提交后台扫描、筛选候选位点、查看候选详情，以及下载结果和独立 HTML 报告。默认参数为 binding-only、最多 2 个 mismatch，并关闭结构分析。
+
+单机启动时，命令会同时启动一个后台 worker。服务器部署时可拆分为两个进程：
+
+```bash
+pufscan worker --database .pufscan_web/atlas.sqlite3
+pufscan web --no-worker --database .pufscan_web/atlas.sqlite3
+```
+
+原有 Streamlit 原型仍保留，可使用 `make legacy-app` 或 `streamlit run app/streamlit_app.py` 启动。
 
 ### 使用合成数据运行 CLI
 
@@ -83,7 +92,7 @@ pufscan scan --config examples/example_config.yaml --no-structure
 
 显式提供的 CLI 参数会覆盖 YAML 中的 query 和路径配置。
 
-## GENCODE Release 50 数据准备
+## 人和小鼠转录组数据准备
 
 默认使用 GENCODE Human Release 50 和 GRCh38.p14。下载命令为：
 
@@ -110,6 +119,34 @@ pufscan prepare-gencode \
 - 输入文件校验清单。
 
 使用 all-regions GTF 能尽可能覆盖 transcript FASTA 中的替代区域、patch 和 haplotype 转录本。只分析主染色体时也可改用 `gencode.v50.annotation.gtf.gz`。
+
+小鼠预设为 GENCODE M39 / GRCm39：
+
+```bash
+pufscan transcriptome download \
+  --species mouse \
+  --release M39 \
+  --output data/gencode_m39
+
+pufscan prepare-gencode \
+  --fasta data/gencode_m39/gencode.vM39.transcripts.fa.gz \
+  --gtf data/gencode_m39/gencode.vM39.annotation.gtf.gz \
+  --output data/gencode_m39/prepared
+```
+
+网页启动时会自动识别人和小鼠预设目录中是否已有可用文件。也可以登记任意已经准备好的物种数据集：
+
+```bash
+pufscan transcriptome register \
+  --id zebrafish-custom-1 \
+  --display-name "Zebrafish custom" \
+  --species "Danio rerio" \
+  --assembly GRCz11 \
+  --fasta /path/to/transcripts.fa \
+  --annotation /path/to/annotation.parquet
+```
+
+网页中的自定义上传接受 transcript FASTA 与 GTF/GFF3/Parquet 注释，单文件上限 512 MB；只有当注释中的 transcript ID 与 FASTA 至少 90% 匹配时才会登记数据集。
 
 ## GTEx 表达数据准备
 
@@ -276,7 +313,22 @@ summary.json
 pufscan report --run-directory results/AACGUCUAUA_YYYYMMDD_HHMMSS
 ```
 
-## Streamlit 功能
+## Atlas 网页功能
+
+```bash
+pufscan web
+```
+
+页面支持：
+
+- 选择 Human、Mouse 或自定义物种转录组；
+- 配置 PUF 序列、mismatch、目标组织、分析模式、编辑窗口和结构分析；
+- 查看后台任务状态，并在完成后自动进入结果页；
+- 按 gene、transcript、region、mismatch 和 risk score 筛选或排序；
+- 查看候选位点的序列比对、表达、结构可及性和潜在编辑事件；
+- 下载 CSV、TSV、Parquet、BED 和完全独立的 HTML 报告。
+
+## 旧版 Streamlit 原型
 
 ```bash
 streamlit run app/streamlit_app.py

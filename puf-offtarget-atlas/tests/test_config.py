@@ -26,3 +26,18 @@ def test_default_yaml_loads() -> None:
     config = load_yaml(Path("configs/default.yaml"))
     assert config["software"]["gencode_release"] == 50
 
+
+def test_scan_config_records_transcriptome_metadata(tmp_path: Path) -> None:
+    config = ScanConfig(
+        query="AACGUCUAUA",
+        fasta=tmp_path / "mouse.fa",
+        gtf=tmp_path / "mouse.gtf",
+        species="Mus musculus",
+        genome_build="GRCm39",
+        annotation_provider="GENCODE",
+        annotation_release="M39",
+    )
+
+    assert config.species == "Mus musculus"
+    assert config.genome_build == "GRCm39"
+    assert config.annotation_release == "M39"

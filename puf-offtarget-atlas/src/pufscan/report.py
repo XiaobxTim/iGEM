@@ -27,18 +27,21 @@ LIMITATIONS = (
 def generate_report(run_dir: Path) -> Path:
     frame = pd.read_parquet(run_dir / "all_transcript_hits.parquet")
     summary = json.loads((run_dir / "summary.json").read_text(encoding="utf-8"))
-    template_dir = Path(__file__).resolve().parents[2] / "templates"
+    metadata = json.loads((run_dir / "run_metadata.json").read_text(encoding="utf-8"))
+    template_dir = Path(__file__).resolve().parent / "templates"
     environment = Environment(loader=FileSystemLoader(template_dir), autoescape=select_autoescape())
     template = environment.get_template("report.html.j2")
     html = template.render(
         summary=summary,
+        metadata=metadata,
         plotly_js=get_plotlyjs(),
         mismatch_plot=mismatch_distribution(frame) if not frame.empty else "<p>Not available</p>",
         risk_plot=risk_distribution(frame) if not frame.empty else "<p>Not available</p>",
         schematic=transcript_schematic(frame.iloc[0]) if not frame.empty else "<p>Not available</p>",
         tissue_heatmap=tissue_heatmap(frame) if not frame.empty else "<p>Not available</p>",
         accessibility_plot=accessibility_plot(frame.iloc[0]) if not frame.empty else "<p>Not available</p>",
-        top_hits=frame.head(50).to_dict(orient="records"),
+        top_hits=frame.head(100).to_dict(orient="records"),
+        top_candidate=frame.iloc[0].to_dict() if not frame.empty else None,
         limitations=LIMITATIONS,
     )
     output = run_dir / "report.html"
