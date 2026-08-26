@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore literature-informed AAV brain delivery and APOE RNA editing simulations.">
+  <title>Brain Delivery Model · REWIRE</title>
+  <link rel="stylesheet" href="/static/brain.css">
+  <script src="/assets/plotly.js"></script>
+  <script src="/static/brain.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Brain Delivery Model home">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span><strong>REWIRE</strong><small>Brain Delivery Model · v4</small></span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <a href="#simulator">Simulator</a>
+      <a href="#methods">Methods</a>
+      <a class="wiki-link" href="{{ wiki_url }}">Project Wiki ↗</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span> Mechanistic design workspace</p>
+        <h1>Trace a dose from <em>administration</em> to RNA editing.</h1>
+        <p class="lede">Explore how route, dose, PUF design and transcriptome-prioritized off-target sites shape a coupled AAV–BBB–cellular expression–APOE editing model.</p>
+        <div class="hero-actions"><a class="button primary" href="#simulator">Run the model <b>↓</b></a><a class="button quiet" href="#methods">Read assumptions</a></div>
+      </div>
+      <div class="hero-map" aria-label="Five model modules from administration to editing">
+        <div class="map-axis"><span>0 h</span><span>systemic</span><span>cellular</span><span>editing</span></div>
+        <ol>
+          <li><b>01</b><span>Administration</span><small>depot / blood</small></li>
+          <li><b>02</b><span>Distribution</span><small>liver · brain</small></li>
+          <li><b>03</b><span>BBB passage</span><small>endo · ISF</small></li>
+          <li><b>04</b><span>Expression</span><small>nucleus · PUF</small></li>
+          <li><b>05</b><span>APOE editing</span><small>112 · 158</small></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="simulator" id="simulator">
+      <div class="section-heading">
+        <div><p class="eyebrow"><span></span> Interactive model</p><h2>Configure one in-silico experiment</h2></div>
+        <p>Normalized units make design comparisons possible while calibration data are still being collected.</p>
+      </div>
+
+      <form id="simulation-form" enctype="multipart/form-data">
+        <fieldset class="mode-switch">
+          <legend>Analysis mode</legend>
+          <label><input type="radio" name="mode" value="single" checked><span><strong>Single simulation</strong><small>Inspect one dose over time</small></span></label>
+          <label><input type="radio" name="mode" value="optimize"><span><strong>Dose optimization</strong><small>Scan 12 doses for feasibility</small></span></label>
+        </fieldset>
+
+        <div class="control-grid">
+          <label><span>PUF design preset</span><select name="design_id">
+            {% for design in designs %}<option value="{{ design.design_id }}">{{ design.design_id }} · {{ design.editor_type }}</option>{% endfor %}
+          </select><small>Sequence features alter binding and catalytic priors.</small></label>
+          <label><span>Administration route</span><select name="route"><option value="footpad">Footpad</option><option value="im">Intramuscular</option><option value="iv">Intravenous</option></select><small>Route changes absorption or blood initialization.</small></label>
+          <label id="dose-control"><span>Dose <output id="dose-output">1.0</output></span><input name="dose" type="range" min="0.1" max="10" step="0.1" value="1"><small>Normalized model units, not a clinical dose.</small></label>
+          <label><span>Simulation duration</span><select name="duration"><option value="24">24 hours</option><option value="48" selected>48 hours</option><option value="72">72 hours</option><option value="168">168 hours</option></select><small>Longer runs resolve delayed expression and editing.</small></label>
+        </div>
+
+        <div class="panel-upload">
+          <div><span class="step-tag">OPTIONAL · CROSS-MODEL BRIDGE</span><h3>Add PUF-OffTarget Atlas candidates</h3><p>Upload <code>brain_candidate_panel.csv</code> to replace the aggregate off-target prior with your transcriptome scan.</p></div>
+          <label class="file-drop"><input id="candidate-panel" name="candidate_panel" type="file" accept=".csv,text/csv"><span id="file-label">Choose candidate CSV</span><small>UTF-8 · ≤ 5 MB · ≤ 10,000 sites</small></label>
+        </div>
+
+        <div class="run-row"><button class="button primary" id="run-button" type="submit">Run simulation <b>→</b></button><p id="form-status" role="status" aria-live="polite">Ready. Typical runtime is under one second locally.</p></div>
+      </form>
+    </section>
+
+    <section class="results" id="results" hidden>
+      <div class="section-heading">
+        <div><p class="eyebrow"><span></span> Model output</p><h2 id="result-title">Simulation readout</h2></div>
+        <div class="download-actions"><button class="button quiet" id="download-json" type="button">JSON ↓</button><button class="button quiet" id="download-csv" type="button">CSV ↓</button></div>
+      </div>
+      <div class="metric-grid" id="metric-grid"></div>
+      <div class="plot-grid"><article><div class="plot-heading"><span>01 · DYNAMICS</span><h3 id="primary-plot-title">Editing over time</h3></div><div id="primary-plot" class="plot"></div></article><article><div class="plot-heading"><span>02 · EXPOSURE</span><h3 id="secondary-plot-title">Brain editor abundance</h3></div><div id="secondary-plot" class="plot"></div></article></div>
+      <aside class="panel-note" id="panel-note"></aside>
+    </section>
+
+    <section class="methods" id="methods">
+      <div><p class="eyebrow light"><span></span> Interpret with care</p><h2>A map for experiments,<br>not a clinical forecast.</h2></div>
+      <div class="method-copy"><p>This literature-informed mechanistic model links five modules and exposes assumptions for design comparison. Its normalized parameters are not fitted to patient data, a particular capsid, or a clinical administration protocol.</p><ul><li>APOE3-like means C112 editing without C158 editing.</li><li>APOE2-like risk proxy tracks double editing at C112 and C158.</li><li>Off-target burden compresses uploaded candidate sites into an effective pool.</li><li>Every predicted trend requires wet-lab validation.</li></ul></div>
+    </section>
+  </main>
+
+  <footer><span>REWIRE · iGEM model workspace</span><span>Literature-informed · not clinically calibrated</span></footer>
+</body>
+</html>

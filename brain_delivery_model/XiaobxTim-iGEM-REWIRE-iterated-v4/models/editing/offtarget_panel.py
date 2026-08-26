@@ -95,8 +95,17 @@ def apply_offtarget_panel_to_config(
     This keeps the current ODE model compact while letting the off-target risk
     come from a transparent candidate table instead of a hand-picked `S_off`.
     """
-    updated = deepcopy(config)
     rows = load_offtarget_panel(panel_path)
+    return apply_offtarget_rows_to_config(config, rows, min_pool=min_pool)
+
+
+def apply_offtarget_rows_to_config(
+    config: Dict,
+    rows: Iterable[Dict[str, float | str]],
+    min_pool: float = 1e-9,
+) -> tuple[Dict, Dict[str, float]]:
+    """Apply already-validated candidate rows without requiring a temporary file."""
+    updated = deepcopy(config)
     summary = summarize_offtarget_panel(rows)
     editing = updated["editing"]
 
