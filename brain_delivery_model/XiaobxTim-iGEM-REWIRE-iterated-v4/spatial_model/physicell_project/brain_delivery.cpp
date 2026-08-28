@@ -163,7 +163,8 @@ void update_bbb(double time_min, double dt_min) {
 
 double field_mass() {
     double total = 0.0;
-    for (int index = 0; index < microenvironment.number_of_voxels(); ++index) {
+    const int voxel_count = static_cast<int>(microenvironment.number_of_voxels());
+    for (int index = 0; index < voxel_count; ++index) {
         total += microenvironment.density_vector(index)[aav_index] *
                  microenvironment.mesh.voxels[index].volume;
     }
@@ -285,7 +286,8 @@ void initialize_brain_delivery() {
     const double inner = parameters.doubles("vessel_radius_um") +
                          parameters.doubles("endothelial_radius_um");
     const double outer = inner + parameters.doubles("perivascular_shell_thickness_um");
-    for (int index = 0; index < microenvironment.number_of_voxels(); ++index) {
+    const int voxel_count = static_cast<int>(microenvironment.number_of_voxels());
+    for (int index = 0; index < voxel_count; ++index) {
         const auto& center = microenvironment.mesh.voxels[index].center;
         const double radial = std::hypot(center[1], center[2]);
         if (radial >= inner && radial < outer) {

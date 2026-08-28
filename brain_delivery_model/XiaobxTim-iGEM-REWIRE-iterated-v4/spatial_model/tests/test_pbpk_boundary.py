@@ -27,6 +27,15 @@ def test_module12_curve_is_nonnegative_and_dose_ordered():
     assert high.raw_amount.max() > low.raw_amount.max()
 
 
+def test_zero_dose_boundary_remains_exactly_zero():
+    curve = simulate_module12(
+        load_base_config("."), dose=0.0, t_end_h=12.0, dt_h=0.5
+    )
+
+    assert np.count_nonzero(curve.raw_amount) == 0
+    assert np.count_nonzero(curve.normalized_amount) == 0
+
+
 def test_three_curves_share_medium_dose_normalization():
     config = load_base_config(".")
 
