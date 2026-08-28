@@ -132,11 +132,10 @@ def write_boundary_csv(curve: BoundaryCurve, path: str | Path) -> Path:
     output = Path(path)
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.writer(handle)
+        writer = csv.writer(handle, lineterminator="\n")
         writer.writerow(
             ("time_min", "A_brain_blood_raw", "A_brain_blood_normalized")
         )
         for values in zip(*arrays, strict=True):
             writer.writerow(tuple(_format_number(value) for value in values))
     return output
-

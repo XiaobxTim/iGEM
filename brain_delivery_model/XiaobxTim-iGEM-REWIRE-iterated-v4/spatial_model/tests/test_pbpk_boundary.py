@@ -57,6 +57,7 @@ def test_boundary_csv_has_stable_schema(tmp_path):
 
     write_boundary_csv(curve, output)
 
+    assert b"\r" not in output.read_bytes()
     with output.open(newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
     assert list(rows[0]) == [
