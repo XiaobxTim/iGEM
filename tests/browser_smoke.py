@@ -44,6 +44,20 @@ with sync_playwright() as playwright:
     assert brain.get_by_text("Candidate panel applied:").is_visible()
     assert brain.locator("#primary-plot .plotly").count() == 1
 
+    brain.locator("#candidate-panel").set_input_files(
+        {
+            "name": "empty_brain_candidate_panel.csv",
+            "mimeType": "text/csv",
+            "buffer": (
+                b"site_id,gene,initial_pool,binding_score,accessibility,context_score,"
+                b"validation_priority,notes\n"
+            ),
+        }
+    )
+    brain.get_by_role("button", name="Run simulation →").click()
+    brain.get_by_text("Conservative prior retained:").wait_for(timeout=30_000)
+    assert "NaN" not in brain.locator("#panel-note").inner_text()
+
     atlas = browser.new_page(viewport={"width": 1280, "height": 900})
     collect_errors(atlas, errors)
     atlas.goto("http://127.0.0.1:8000", wait_until="networkidle")

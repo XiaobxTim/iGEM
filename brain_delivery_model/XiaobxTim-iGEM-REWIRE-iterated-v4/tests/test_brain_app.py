@@ -81,6 +81,7 @@ def test_single_simulation_api_applies_design_and_candidate_panel() -> None:
     assert payload["mode"] == "single"
     assert payload["inputs"]["design_id"] == "10R-design-4"
     assert payload["panel_summary"]["n_sites"] == 1.0
+    assert payload["panel_summary"]["applied"] is True
     assert 0.0 <= payload["metrics"]["apoe3_like_fraction_final"] <= 1.0
     assert 0.0 <= payload["metrics"]["apoe2_like_fraction_final"] <= 1.0
     assert len(payload["series"]["time"]) == len(payload["series"]["pbrain"])
@@ -139,6 +140,7 @@ def test_empty_uploaded_panel_retains_conservative_base_prior() -> None:
 
     assert empty_panel["metrics"] == baseline["metrics"]
     assert empty_panel["panel_summary"]["provided"] is True
+    assert empty_panel["panel_summary"]["applied"] is False
     assert "retained" in empty_panel["panel_summary"]["warning"].lower()
 
 

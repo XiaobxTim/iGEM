@@ -73,9 +73,13 @@ function renderOptimization(data) {
 
 function renderPanelNote(data) {
   const panel = data.panel_summary;
-  document.querySelector('#panel-note').innerHTML = panel.provided
-    ? `<strong>Candidate panel applied:</strong> ${fmt(panel.n_sites, 0)} sites compressed into an effective pool of ${fmt(panel.effective_pool)}. The bridge preserves ranking evidence but does not model every RNA as a separate ODE state.`
-    : '<strong>Base off-target prior used:</strong> no PUF candidate panel was uploaded. Run PUF-OffTarget Atlas for a transcriptome-informed comparison.';
+  if (panel.warning) {
+    document.querySelector('#panel-note').innerHTML = `<strong>Conservative prior retained:</strong> ${panel.warning}`;
+  } else if (panel.applied) {
+    document.querySelector('#panel-note').innerHTML = `<strong>Candidate panel applied:</strong> ${fmt(panel.n_sites, 0)} sites compressed into an effective pool of ${fmt(panel.effective_pool)}. The bridge preserves ranking evidence but does not model every RNA as a separate ODE state.`;
+  } else {
+    document.querySelector('#panel-note').innerHTML = '<strong>Base off-target prior used:</strong> no PUF candidate panel was uploaded. Run PUF-OffTarget Atlas for a transcriptome-informed comparison.';
+  }
 }
 
 form.addEventListener('submit', async (event) => {

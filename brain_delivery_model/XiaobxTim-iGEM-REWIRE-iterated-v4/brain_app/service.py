@@ -135,12 +135,14 @@ def _prepare_config(
     if panel_rows is None:
         panel_summary: dict[str, Any] = {
             "provided": False,
+            "applied": False,
             "n_sites": 0.0,
             "interpretation": "Base-config aggregate off-target prior retained.",
         }
     elif not panel_rows:
         panel_summary = {
             "provided": True,
+            "applied": False,
             "n_sites": 0.0,
             "warning": (
                 "The uploaded panel contained no candidate rows; the conservative "
@@ -150,6 +152,7 @@ def _prepare_config(
     else:
         config, panel_summary = apply_offtarget_rows_to_config(config, panel_rows)
         panel_summary["provided"] = True
+        panel_summary["applied"] = True
     return config, dict(modifiers), panel_summary
 
 
