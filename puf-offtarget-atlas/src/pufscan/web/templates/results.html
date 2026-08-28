@@ -5,7 +5,7 @@
 <main class="results-shell">
   <section class="result-hero">
     <div><a class="back-link" href="/">← New search</a><p class="eyebrow"><span></span> Completed transcriptome screen</p><h1><span class="rna-label">5′</span> {{ summary.input_motif }} <span class="rna-label">3′</span></h1><p>{{ summary.species }} · {{ summary.genome_build }} · {{ summary.annotation_release }}</p></div>
-    <div class="result-actions"><a class="secondary-button" href="/runs/{{ run.id }}/downloads/report.html">Offline HTML</a><a class="primary-button" href="/runs/{{ run.id }}/downloads/top_hits.tsv">Download top hits <i>↓</i></a></div>
+    <div class="result-actions"><a class="secondary-button" href="/runs/{{ run.id }}/downloads/report.html">Offline HTML</a><a class="secondary-button" href="/runs/{{ run.id }}/downloads/brain_candidate_panel.csv">Brain panel CSV <i>↓</i></a><a class="secondary-button" href="/runs/{{ run.id }}/downloads/brain_candidate_panel.metadata.json">Panel metadata <i>↓</i></a><a class="secondary-button" href="{{ brain_app_url }}">Open Brain App <i>↗</i></a><a class="primary-button" href="/runs/{{ run.id }}/downloads/top_hits.tsv">Download top hits <i>↓</i></a></div>
   </section>
 
   <section class="metrics-grid" aria-label="Run summary">

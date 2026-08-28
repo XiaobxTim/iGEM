@@ -40,6 +40,8 @@ def test_home_lists_available_transcriptomes(tmp_path: Path) -> None:
     assert "PUF-OffTarget Atlas" in response.text
     assert "Synthetic demo" in response.text
     assert "Advanced analysis settings" in response.text
+    assert "Project Wiki" in response.text
+    assert "unpkg.com" not in response.text
     assert 'class="base base-a"' in response.text
     assert client.get("/static/atlas.css").status_code == 200
 
@@ -101,6 +103,10 @@ def test_completed_run_exposes_results_and_candidate_partial(tmp_path: Path) -> 
     detail = client.get(f"/runs/{run_id}/candidates/1")
 
     assert "Candidate sites" in result.text
+    assert "Brain panel CSV" in result.text
+    assert "Panel metadata" in result.text
+    assert "Open Brain App" in result.text
+    assert f'/runs/{run_id}/downloads/brain_candidate_panel.csv' in result.text
     assert "/assets/plotly.js" in result.text
     assert "Filter candidate sites" in result.text
     assert candidates.status_code == 200
@@ -109,8 +115,14 @@ def test_completed_run_exposes_results_and_candidate_partial(tmp_path: Path) -> 
     assert "Sequence alignment" in detail.text
 
     report_download = client.get(f"/runs/{run_id}/downloads/report.html")
+    panel_download = client.get(f"/runs/{run_id}/downloads/brain_candidate_panel.csv")
+    panel_metadata = client.get(
+        f"/runs/{run_id}/downloads/brain_candidate_panel.metadata.json"
+    )
     missing_download = client.get(f"/runs/{run_id}/downloads/secrets.txt")
     assert report_download.status_code == 200
+    assert panel_download.status_code == 200
+    assert panel_metadata.status_code == 200
     assert missing_download.status_code == 404
 
 

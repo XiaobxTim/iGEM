@@ -13,6 +13,7 @@ from typing import Any
 import pandas as pd
 
 from pufscan import __version__
+from pufscan.brain_panel import export_brain_candidate_panel
 from pufscan.config import ScanConfig
 from pufscan.consequence import PotentialEditingEvent, find_potential_editing_events
 from pufscan.coordinates import MappedHit, TranscriptCoordinateIndex
@@ -285,6 +286,7 @@ def _write_outputs(frame: pd.DataFrame, events: list[dict[str, Any]], run_dir: P
             .reset_index()
         )
     loci.to_csv(run_dir / "unique_genomic_loci.tsv", sep="\t", index=False)
+    export_brain_candidate_panel(frame, run_dir)
     _write_bed_files(frame, run_dir)
 
 

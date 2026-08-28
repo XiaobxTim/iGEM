@@ -13,7 +13,10 @@ def build_initial_state(dose: float, config) -> np.ndarray:
     y0 = np.zeros(len(STATE_ORDER), dtype=float)
 
     # Module 1 initial input
-    y0[idx["A_dep"]] = dose
+    if config.get("route") == "iv":
+        y0[idx["A_blood"]] = dose
+    else:
+        y0[idx["A_dep"]] = dose
 
     # Module 5 initial substrate pools
     editing_model = config["editing"].get("model", "competitive")

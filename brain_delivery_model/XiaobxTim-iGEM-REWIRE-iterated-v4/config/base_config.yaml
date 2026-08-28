@@ -11,6 +11,18 @@ absorption:
     k_blood: 0.03
     k_deg_loc: 0.005
     k_lymph_to_blood: 0.12
+  im:
+    # Literature-informed route prior; not calibrated to a specific capsid.
+    k_lymph: 0.04
+    k_blood: 0.05
+    k_deg_loc: 0.006
+    k_lymph_to_blood: 0.10
+  iv:
+    # IV dose is initialized directly in blood; no local depot flux remains.
+    k_lymph: 0.0
+    k_blood: 0.0
+    k_deg_loc: 0.0
+    k_lymph_to_blood: 0.0
 
 distribution:
   k_blood_to_liver: 0.08

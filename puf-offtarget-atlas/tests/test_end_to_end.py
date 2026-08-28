@@ -33,12 +33,19 @@ def test_binding_only_end_to_end_writes_all_core_outputs(tmp_path: Path) -> None
         "candidates.bed12",
         "report.html",
         "summary.json",
+        "brain_candidate_panel.csv",
+        "brain_candidate_panel.metadata.json",
     }
     assert expected <= {path.name for path in result.output_dir.iterdir()}
     hits = pd.read_parquet(result.output_dir / "all_transcript_hits.parquet")
     assert len(hits) == 6
     assert {"gene_name", "transcript_region", "genomic_blocks", "risk_score"} <= set(hits.columns)
     assert hits["risk_score"].between(0, 100).all()
+    brain_panel = pd.read_csv(result.output_dir / "brain_candidate_panel.csv")
+    assert len(brain_panel) == len(
+        hits[["chromosome", "strand", "genomic_blocks"]].drop_duplicates()
+    )
+    assert brain_panel["binding_score"].between(0, 1).all()
     summary = json.loads((result.output_dir / "summary.json").read_text(encoding="utf-8"))
     assert summary["candidate_sites"] == 6
     assert "prioritization score, not a calibrated probability" in (result.output_dir / "report.html").read_text()
@@ -112,3 +119,4 @@ def test_zero_hit_run_still_writes_typed_empty_outputs(tmp_path: Path) -> None:
     hits = pd.read_parquet(result.output_dir / "all_transcript_hits.parquet")
     assert hits.empty
     assert {"rank", "risk_score", "transcript_id", "genomic_blocks"} <= set(hits.columns)
+    assert pd.read_csv(result.output_dir / "brain_candidate_panel.csv").empty

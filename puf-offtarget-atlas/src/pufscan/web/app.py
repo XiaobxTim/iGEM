@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Annotated
 
@@ -45,6 +46,12 @@ def create_app(
     results = results_dir or root / "results/web"
     custom_data = custom_data_dir or root / "data/custom"
     templates = Jinja2Templates(directory=Path(__file__).parent / "templates")
+    templates.env.globals["wiki_url"] = os.getenv(
+        "IGEM_WIKI_URL", "http://127.0.0.1:5173"
+    )
+    templates.env.globals["brain_app_url"] = os.getenv(
+        "BRAIN_APP_URL", "http://127.0.0.1:8001"
+    )
 
     app = FastAPI(title="PUF-OffTarget Atlas")
     app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static")
@@ -274,6 +281,8 @@ def create_app(
         "potential_editing_events.tsv",
         "summary.json",
         "run_metadata.json",
+        "brain_candidate_panel.csv",
+        "brain_candidate_panel.metadata.json",
     }
 
     @app.get("/runs/{run_id}/downloads/{artifact}")
