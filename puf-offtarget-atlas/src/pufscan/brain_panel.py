@@ -31,15 +31,18 @@ def _canonical_blocks(value: object) -> str:
         return value.strip()
 
 
-def _site_id(row: pd.Series) -> str:
-    location = "|".join(
+def _locus_key(row: pd.Series) -> str:
+    return "|".join(
         (
             str(row.get("chromosome", "")),
             str(row.get("strand", "")),
             _canonical_blocks(row.get("genomic_blocks", "")),
         )
     )
-    digest = hashlib.sha256(location.encode("utf-8")).hexdigest()[:12]
+
+
+def _site_id(row: pd.Series) -> str:
+    digest = hashlib.sha256(_locus_key(row).encode("utf-8")).hexdigest()[:12]
     return f"puf-{digest}"
 
 
@@ -135,10 +138,10 @@ def export_brain_candidate_panel(
         if missing_columns:
             missing = ", ".join(sorted(missing_columns))
             raise ValueError(f"candidate frame is missing locus columns: {missing}")
-        selected = (
-            frame.sort_values(["risk_score", "sequence_score"], ascending=False)
-            .drop_duplicates(list(_LOCUS_COLUMNS), keep="first")
-        )
+        selected = frame.assign(
+            _brain_locus_key=frame.apply(_locus_key, axis=1)
+        ).sort_values(["risk_score", "sequence_score"], ascending=False)
+        selected = selected.drop_duplicates("_brain_locus_key", keep="first")
         unique_count = len(selected)
         selected = selected.head(limit)
 

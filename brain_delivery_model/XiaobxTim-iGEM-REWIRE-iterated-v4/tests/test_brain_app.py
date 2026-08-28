@@ -5,7 +5,7 @@ import io
 from fastapi.testclient import TestClient
 
 from brain_app.app import create_app
-from brain_app.service import MAX_PANEL_BYTES, parse_candidate_panel
+from brain_app.service import MAX_PANEL_BYTES, parse_candidate_panel, run_model
 
 
 def test_home_exposes_model_inputs_and_disclaimer() -> None:
@@ -123,3 +123,62 @@ def test_invalid_request_returns_explainable_error() -> None:
 
     assert response.status_code == 422
     assert "dose" in response.json()["detail"].lower()
+
+
+def test_empty_uploaded_panel_retains_conservative_base_prior() -> None:
+    inputs = {
+        "mode": "single",
+        "design_id": "10R-design-4",
+        "route": "footpad",
+        "dose": 1.0,
+        "duration": 24.0,
+    }
+
+    baseline = run_model(**inputs, panel_rows=None)
+    empty_panel = run_model(**inputs, panel_rows=[])
+
+    assert empty_panel["metrics"] == baseline["metrics"]
+    assert empty_panel["panel_summary"]["provided"] is True
+    assert "retained" in empty_panel["panel_summary"]["warning"].lower()
+
+
+def test_web_metrics_match_direct_service_call() -> None:
+    client = TestClient(create_app())
+    form = {
+        "mode": "single",
+        "design_id": "10R-design-4",
+        "route": "iv",
+        "dose": "0.8",
+        "duration": "24",
+    }
+
+    response = client.post("/api/simulate", data=form)
+    direct = run_model(
+        mode="single",
+        design_id="10R-design-4",
+        route="iv",
+        dose=0.8,
+        duration=24.0,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["metrics"] == direct["metrics"]
+
+
+def test_web_rejects_oversized_panel_before_parsing() -> None:
+    client = TestClient(create_app())
+
+    response = client.post(
+        "/api/simulate",
+        data={
+            "mode": "single",
+            "design_id": "10R-design-4",
+            "route": "footpad",
+            "dose": "1.0",
+            "duration": "24",
+        },
+        files={"candidate_panel": ("too-large.csv", b"x" * (MAX_PANEL_BYTES + 1), "text/csv")},
+    )
+
+    assert response.status_code == 422
+    assert "5 MB" in response.json()["detail"]

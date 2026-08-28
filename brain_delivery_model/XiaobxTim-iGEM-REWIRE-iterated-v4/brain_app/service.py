@@ -138,6 +138,15 @@ def _prepare_config(
             "n_sites": 0.0,
             "interpretation": "Base-config aggregate off-target prior retained.",
         }
+    elif not panel_rows:
+        panel_summary = {
+            "provided": True,
+            "n_sites": 0.0,
+            "warning": (
+                "The uploaded panel contained no candidate rows; the conservative "
+                "base-config aggregate off-target prior was retained."
+            ),
+        }
     else:
         config, panel_summary = apply_offtarget_rows_to_config(config, panel_rows)
         panel_summary["provided"] = True

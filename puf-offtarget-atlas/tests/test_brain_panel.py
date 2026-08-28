@@ -104,3 +104,24 @@ def test_export_limits_panel_and_writes_header_only_for_zero_hits(tmp_path: Path
     assert empty_panel.empty
     assert list(empty_panel.columns) == list(BRAIN_PANEL_COLUMNS)
     assert json.loads(empty_metadata.read_text(encoding="utf-8"))["exported_locus_count"] == 0
+
+
+def test_export_deduplicates_equivalent_genomic_block_json(tmp_path: Path) -> None:
+    compact = _candidate()
+    reformatted = _candidate(
+        transcript_id="ENST_FORMATTED",
+        risk_score=70.0,
+        genomic_blocks=json.dumps(
+            [{"end_1based": 109, "start_1based": 100, "chromosome": "chr19"}],
+            indent=2,
+        ),
+    )
+
+    csv_path, _ = export_brain_candidate_panel(
+        pd.DataFrame([compact, reformatted]),
+        tmp_path,
+    )
+
+    panel = pd.read_csv(csv_path)
+    assert len(panel) == 1
+    assert panel["site_id"].is_unique

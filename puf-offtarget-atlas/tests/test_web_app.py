@@ -103,7 +103,9 @@ def test_completed_run_exposes_results_and_candidate_partial(tmp_path: Path) -> 
     detail = client.get(f"/runs/{run_id}/candidates/1")
 
     assert "Candidate sites" in result.text
-    assert "Use in Brain Delivery Model" in result.text
+    assert "Brain panel CSV" in result.text
+    assert "Panel metadata" in result.text
+    assert "Open Brain App" in result.text
     assert f'/runs/{run_id}/downloads/brain_candidate_panel.csv' in result.text
     assert "/assets/plotly.js" in result.text
     assert "Filter candidate sites" in result.text

@@ -10,7 +10,7 @@ from fastapi.templating import Jinja2Templates
 from plotly.offline import get_plotlyjs
 from starlette.datastructures import UploadFile
 
-from brain_app.service import get_designs, parse_candidate_panel, run_model
+from brain_app.service import MAX_PANEL_BYTES, get_designs, parse_candidate_panel, run_model
 
 
 def create_app() -> FastAPI:
@@ -49,7 +49,9 @@ def create_app() -> FastAPI:
             upload = form.get("candidate_panel")
             panel_rows = None
             if isinstance(upload, UploadFile) and upload.filename:
-                panel_rows = parse_candidate_panel(await upload.read())
+                if upload.size is not None and upload.size > MAX_PANEL_BYTES:
+                    raise ValueError("Candidate panel exceeds the 5 MB upload limit.")
+                panel_rows = parse_candidate_panel(await upload.read(MAX_PANEL_BYTES + 1))
             payload = run_model(
                 mode=str(form.get("mode", "single")),
                 design_id=str(form.get("design_id", "")),

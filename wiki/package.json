@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "audit": "node scripts/audit-build.mjs",
     "test": "vitest run",
     "lint": "eslint ."
   },

@@ -21,6 +21,7 @@ can be changed in `.env.local`.
 npm test
 npm run lint
 npm run build
+npm run audit
 ```
 
 The deployable static site is written to `dist/`. `dist/` and `node_modules/`
@@ -34,10 +35,12 @@ Set `VITE_TEAM_SLUG` to the path segment used by the team Wiki before building:
 VITE_TEAM_SLUG=your-team-slug npm run build
 ```
 
-Upload the contents of `dist/` through the team Wiki deployment workflow. The
+Upload the contents of `dist/` through the team Wiki deployment workflow. Each
+client route has its own static `index.html`, so direct links such as
+`/model/` and `/software/` work without a catch-all server rewrite. The
 bundle loads no remote fonts, scripts, stylesheets or images at runtime. The
 external URLs on the Resources page are ordinary links and are not fetched by
 the application.
 
 For hosted model apps, also set `VITE_BRAIN_APP_URL` and `VITE_PUF_APP_URL` at
-build time. Client-side routes require the host to fall back to `index.html`.
+build time.

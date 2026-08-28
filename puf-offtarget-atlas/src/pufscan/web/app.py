@@ -49,6 +49,9 @@ def create_app(
     templates.env.globals["wiki_url"] = os.getenv(
         "IGEM_WIKI_URL", "http://127.0.0.1:5173"
     )
+    templates.env.globals["brain_app_url"] = os.getenv(
+        "BRAIN_APP_URL", "http://127.0.0.1:8001"
+    )
 
     app = FastAPI(title="PUF-OffTarget Atlas")
     app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static")

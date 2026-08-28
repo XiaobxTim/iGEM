@@ -47,3 +47,19 @@ set to `1.0` by the exporter and recorded in metadata.
 Generated transcriptomes, scan results, model outputs, Wiki builds and package
 dependencies are ignored by Git. Model outputs are literature-informed design
 hypotheses, not clinically calibrated predictions.
+
+## Integration verification
+
+The automated cross-model test performs a synthetic PUF scan, parses its real
+CSV export and runs the Brain model:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 conda run -n xbx_env pytest -q tests/test_cross_model_workflow.py
+```
+
+The browser smoke test expects the Wiki, Brain App and PUF App on ports 5173,
+8001 and 8000 respectively:
+
+```bash
+conda run -n xbx_env python tests/browser_smoke.py
+```
