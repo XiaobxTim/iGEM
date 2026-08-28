@@ -2,6 +2,21 @@
 
 A runnable multiscale AAV delivery–expression–editing framework for brain-targeted therapeutic design.
 
+## New: PhysiCell–ParaView spatial model
+
+The repository now includes a three-dimensional PhysiCell/BioFVM extension
+with fixed brain cells, BBB release, extracellular AAV diffusion, per-cell
+Module 4–5 dynamics, and directly loadable ParaView time series. The default
+pipeline runs 0.3×, 1.0×, and 3.0× doses for 72 hours:
+
+```bash
+conda run -n xbx_env python -m spatial_model.setup_physicell
+conda run -n xbx_env python -m spatial_model.run_pipeline
+```
+
+See [`spatial_model/README_CN.md`](spatial_model/README_CN.md) for the Chinese
+run guide, ParaView workflow, PhysiCell Studio notes, and output schema.
+
 ## Iterated REWIRE-style version
 
 This copy is the separated, iterated version of the combined AAV-PUF-APOBEC
