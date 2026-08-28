@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from pathlib import Path
 
 
 def _rates_per_minute(section: dict) -> dict:
@@ -49,3 +50,33 @@ def build_spatial_parameters(config: dict) -> dict:
         },
     }
 
+
+def _flatten(prefix: str, value: object, output: dict[str, object]) -> None:
+    if isinstance(value, dict):
+        for key, nested in value.items():
+            child = f"{prefix}.{key}" if prefix else str(key)
+            _flatten(child, nested, output)
+        return
+    output[prefix] = value
+
+
+def _format_value(value: object) -> str:
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, float):
+        return format(value, ".12g")
+    return str(value)
+
+
+def write_parameter_file(parameters: dict, path: str | Path) -> Path:
+    """Write sorted dotted key/value parameters for the dependency-free C++ core."""
+
+    flattened: dict[str, object] = {}
+    _flatten("", parameters, flattened)
+    output = Path(path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(
+        "".join(f"{key}={_format_value(flattened[key])}\n" for key in sorted(flattened)),
+        encoding="utf-8",
+    )
+    return output

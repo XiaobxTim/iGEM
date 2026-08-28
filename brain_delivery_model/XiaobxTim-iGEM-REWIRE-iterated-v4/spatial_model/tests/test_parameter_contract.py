@@ -4,7 +4,7 @@ import math
 
 import pytest
 
-from spatial_model.parameter_contract import build_spatial_parameters
+from spatial_model.parameter_contract import build_spatial_parameters, write_parameter_file
 from utils.config_loader import load_base_config
 
 
@@ -26,3 +26,15 @@ def test_spatial_parameters_convert_hour_rates_and_apply_cell_priors():
     )
     assert params["cell_types"]["neuron"]["apoe_scale"] == 0.2
     assert params["cell_types"]["astrocyte"]["apoe_scale"] == 1.0
+
+
+def test_parameter_file_is_flat_stable_and_cpp_readable(tmp_path):
+    config = load_base_config(".")
+    output = tmp_path / "spatial_parameters.cfg"
+
+    write_parameter_file(build_spatial_parameters(config), output)
+
+    lines = output.read_text(encoding="utf-8").splitlines()
+    assert "intracellular.k_tx_per_min=0.00666666666667" in lines
+    assert "editing.editor_type=A3A" in lines
+    assert lines == sorted(lines)
